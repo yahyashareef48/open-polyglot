@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Moon, Sun, Menu, X, Github, ExternalLink } from 'lucide-react';
-import { useTheme } from '../contexts/theme-context';
+import { useState } from "react";
+import { Moon, Sun, Menu, X, Github, ExternalLink } from "lucide-react";
+import { useTheme } from "../contexts/theme-context";
 
 export function Navigation() {
   const { theme, toggleTheme } = useTheme();
@@ -18,30 +18,19 @@ export function Navigation() {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
             <div className="flex-shrink-0">
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                OpenPolyglot
-              </h1>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Open Polyglot</h1>
             </div>
           </div>
 
           <div className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-4">
-              <a
-                href="#features"
-                className="text-foreground hover:text-primary transition-colors px-3 py-2 rounded-md text-sm font-medium"
-              >
+              <a href="#features" className="text-foreground hover:text-primary transition-colors px-3 py-2 rounded-md text-sm font-medium">
                 Features
               </a>
-              <a
-                href="#languages"
-                className="text-foreground hover:text-primary transition-colors px-3 py-2 rounded-md text-sm font-medium"
-              >
+              <a href="#languages" className="text-foreground hover:text-primary transition-colors px-3 py-2 rounded-md text-sm font-medium">
                 Languages
               </a>
-              <a
-                href="#how-it-works"
-                className="text-foreground hover:text-primary transition-colors px-3 py-2 rounded-md text-sm font-medium"
-              >
+              <a href="#how-it-works" className="text-foreground hover:text-primary transition-colors px-3 py-2 rounded-md text-sm font-medium">
                 How It Works
               </a>
               <a
@@ -62,7 +51,7 @@ export function Navigation() {
               className="p-2 rounded-md text-foreground hover:text-primary hover:bg-accent transition-colors"
               aria-label="Toggle theme"
             >
-              {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+              {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
             </button>
 
             <div className="hidden md:block">
