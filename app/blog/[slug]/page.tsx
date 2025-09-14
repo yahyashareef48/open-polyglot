@@ -1,7 +1,10 @@
+"use client";
+
 import { Calendar, ArrowLeft, Twitter, Linkedin, User, Share2, Clock, Github } from 'lucide-react';
 import Link from 'next/link';
-import { getPostBySlug, getAllPosts } from '@/lib/blog';
+import { getPostBySlug, getAllPosts, BlogPost } from '@/lib/blog';
 import { notFound } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 interface Props {
   params: {
@@ -9,8 +12,30 @@ interface Props {
   };
 }
 
-export default async function BlogPostPage({ params }: Props) {
-  const post = await getPostBySlug(params.slug);
+export default function BlogPostPage({ params }: Props) {
+  const [post, setPost] = useState<BlogPost | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getPostBySlug(params.slug).then((post) => {
+      if (!post) {
+        notFound();
+      }
+      setPost(post);
+      setLoading(false);
+    });
+  }, [params.slug]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-slate-900 dark:to-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-300">Loading blog post...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!post) {
     notFound();
@@ -180,10 +205,3 @@ export default async function BlogPostPage({ params }: Props) {
   );
 }
 
-// Generate static params for all blog posts
-export async function generateStaticParams() {
-  const posts = await getAllPosts();
-  return posts.map((post) => ({
-    slug: post.slug,
-  }));
-}

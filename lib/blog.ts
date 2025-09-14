@@ -1,10 +1,5 @@
-import fs from 'fs';
-import path from 'path';
-import matter from 'gray-matter';
-import { remark } from 'remark';
-import html from 'remark-html';
-
-const postsDirectory = path.join(process.cwd(), 'content/blog');
+import matter from "gray-matter";
+import { marked } from "marked";
 
 export interface BlogPost {
   slug: string;
@@ -16,68 +11,76 @@ export interface BlogPost {
   content: string;
 }
 
+// List of blog post files (you'll need to maintain this manually or create a build script)
+const blogPosts = ["2025-01-13-theme-system.md", "2025-01-14-project-launch.md", "2025-01-15-subdomain-routing.md"];
+
 export async function getAllPosts(): Promise<BlogPost[]> {
-  // Check if posts directory exists
-  if (!fs.existsSync(postsDirectory)) {
-    return [];
-  }
-
-  const fileNames = fs.readdirSync(postsDirectory);
   const allPostsData = await Promise.all(
-    fileNames
-      .filter((fileName) => fileName.endsWith('.md'))
-      .map(async (fileName) => {
-        const slug = fileName.replace(/\.md$/, '');
-        const fullPath = path.join(postsDirectory, fileName);
-        const fileContents = fs.readFileSync(fullPath, 'utf8');
+    blogPosts.map(async (fileName) => {
+      const slug = fileName.replace(/\.md$/, "");
 
+      try {
+        const response = await fetch(`/content/blog/${fileName}`);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch ${fileName}`);
+        }
+
+        const fileContents = await response.text();
         const { data, content } = matter(fileContents);
 
-        // Process markdown content to HTML
-        const processedContent = await remark()
-          .use(html)
-          .process(content);
-        const contentHtml = processedContent.toString();
+        // Process markdown content to HTML using marked
+        const contentHtml = marked(content);
 
         return {
           slug,
-          title: data.title || 'Untitled',
-          date: data.date || new Date().toISOString().split('T')[0],
+          title: data.title || "Untitled",
+          date: data.date || new Date().toISOString().split("T")[0],
           tags: data.tags || [],
-          author: data.author || 'Open Polyglot Team',
-          excerpt: data.excerpt || '',
+          author: data.author || "Open Polyglot Team",
+          excerpt: data.excerpt || "",
           content: contentHtml,
         } as BlogPost;
-      })
+      } catch (error) {
+        console.error(`Error loading blog post ${fileName}:`, error);
+        return null;
+      }
+    })
   );
 
-  // Sort posts by date (newest first)
-  return allPostsData.sort((a, b) => (a.date < b.date ? 1 : -1));
+  // Filter out failed posts and sort by date (newest first)
+  return allPostsData.filter((post): post is BlogPost => post !== null).sort((a, b) => (a.date < b.date ? 1 : -1));
 }
 
 export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
   try {
-    const fullPath = path.join(postsDirectory, `${slug}.md`);
-    const fileContents = fs.readFileSync(fullPath, 'utf8');
+    // Find the filename that matches this slug
+    const fileName = blogPosts.find((file) => file.replace(/\.md$/, "") === slug);
+    if (!fileName) {
+      return null;
+    }
 
+    const response = await fetch(`/content/blog/${fileName}`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch ${fileName}`);
+    }
+
+    const fileContents = await response.text();
     const { data, content } = matter(fileContents);
 
-    // Process markdown content to HTML
-    const processedContent = await remark()
-      .use(html)
-      .process(content);
-    const contentHtml = processedContent.toString();
+    // Process markdown content to HTML using marked
+    const contentHtml = await marked(content);
 
     return {
       slug,
-      title: data.title || 'Untitled',
-      date: data.date || new Date().toISOString().split('T')[0],
+      title: data.title || "Untitled",
+      date: data.date || new Date().toISOString().split("T")[0],
       tags: data.tags || [],
-      author: data.author || 'Open Polyglot Team',
-      excerpt: data.excerpt || '',
+      author: data.author || "Open Polyglot Team",
+      excerpt: data.excerpt || "",
       content: contentHtml,
     };
   } catch (error) {
+    console.error(`Error loading blog post ${slug}:`, error);
     return null;
   }
 }
