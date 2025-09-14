@@ -458,7 +458,7 @@ export default function Home() {
           </div>
 
           <div className="border-t border-border mt-8 pt-8 text-center text-muted-foreground">
-            <p>&copy; 2024 Open Polyglot. Free and open-source language learning for everyone.</p>
+            <p>&copy; 2025 Open Polyglot. Free and open-source language learning for everyone.</p>
           </div>
         </div>
       </footer>
