@@ -142,12 +142,26 @@ export default async function BlogPostPage({ params }: Props) {
       {/* Content */}
       <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-8 md:p-12">
-          <div className="prose prose-lg prose-gray dark:prose-invert max-w-none">
-            <div
-              className="markdown-content"
-              dangerouslySetInnerHTML={{ __html: post.content }}
-            />
-          </div>
+          <div
+            className="markdown-content
+              [&_h1]:text-4xl [&_h1]:font-extrabold [&_h1]:text-gray-900 [&_h1]:dark:text-white [&_h1]:mb-8 [&_h1]:leading-tight
+              [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-gray-900 [&_h2]:dark:text-white [&_h2]:mt-12 [&_h2]:mb-6 [&_h2]:border-b [&_h2]:border-gray-300 [&_h2]:dark:border-gray-600 [&_h2]:pb-3
+              [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:text-gray-800 [&_h3]:dark:text-gray-200 [&_h3]:mt-10 [&_h3]:mb-4
+              [&_h4]:text-lg [&_h4]:font-semibold [&_h4]:text-gray-800 [&_h4]:dark:text-gray-200 [&_h4]:mt-8 [&_h4]:mb-3
+              [&_p]:text-lg [&_p]:leading-relaxed [&_p]:text-gray-700 [&_p]:dark:text-gray-300 [&_p]:mb-6
+              [&_ul]:my-6 [&_ul]:pl-8 [&_ol]:my-6 [&_ol]:pl-8
+              [&_li]:text-lg [&_li]:leading-relaxed [&_li]:text-gray-700 [&_li]:dark:text-gray-300 [&_li]:mb-2
+              [&_code]:bg-gray-100 [&_code]:dark:bg-gray-800 [&_code]:text-blue-600 [&_code]:dark:text-blue-400 [&_code]:px-2 [&_code]:py-1 [&_code]:rounded [&_code]:text-sm [&_code]:font-mono
+              [&_pre]:bg-gray-50 [&_pre]:dark:bg-gray-900 [&_pre]:border [&_pre]:border-gray-200 [&_pre]:dark:border-gray-700 [&_pre]:rounded-xl [&_pre]:p-6 [&_pre]:my-8 [&_pre]:overflow-x-auto
+              [&_pre_code]:bg-transparent [&_pre_code]:text-gray-800 [&_pre_code]:dark:text-gray-200 [&_pre_code]:p-0
+              [&_blockquote]:border-l-4 [&_blockquote]:border-blue-500 [&_blockquote]:bg-blue-50/50 [&_blockquote]:dark:bg-blue-950/20 [&_blockquote]:pl-6 [&_blockquote]:py-4 [&_blockquote]:my-8 [&_blockquote]:rounded-r
+              [&_a]:text-blue-600 [&_a]:dark:text-blue-400 [&_a]:font-medium [&_a]:no-underline [&_a]:hover:underline
+              [&_strong]:font-semibold [&_strong]:text-gray-900 [&_strong]:dark:text-white
+              [&_img]:rounded-xl [&_img]:shadow-lg [&_img]:my-8 [&_img]:w-full
+              [&_hr]:border-gray-300 [&_hr]:dark:border-gray-600 [&_hr]:my-12
+            "
+            dangerouslySetInnerHTML={{ __html: post.content }}
+          />
         </div>
 
 
