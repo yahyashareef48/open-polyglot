@@ -16,7 +16,7 @@ interface ThemeProviderProps {
 }
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>('light');
+  const [theme, setTheme] = useState<Theme>('dark');
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -24,8 +24,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     if (storedTheme) {
       setTheme(storedTheme);
     } else {
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      setTheme(prefersDark ? 'dark' : 'light');
+      setTheme('dark');
     }
     setMounted(true);
   }, []);
