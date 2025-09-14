@@ -7,7 +7,17 @@ module.exports = {
     './app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        'text-primary': 'var(--color-text-primary)',
+        'text-secondary': 'var(--color-text-secondary)',
+        'text-tertiary': 'var(--color-text-tertiary)',
+        'link': 'var(--color-link)',
+        'link-hover': 'var(--color-link-hover)',
+        'hover-bg': 'var(--color-hover-bg)',
+        'card-bg': 'var(--color-card-bg)',
+      }
+    },
   },
   plugins: [],
 }

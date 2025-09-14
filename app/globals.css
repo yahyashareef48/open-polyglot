@@ -22,6 +22,15 @@
   --input: #e2e8f0;
   --ring: #0f172a;
   --radius: 0.5rem;
+
+  /* Blog-specific colors */
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+  --text-tertiary: #9ca3af;
+  --link: #2563eb;
+  --link-hover: #1d4ed8;
+  --hover-bg: #dbeafe;
+  --card-bg: #ffffff;
 }
 
 @theme inline {
@@ -46,6 +55,15 @@
   --color-ring: var(--ring);
   --font-sans: var(--font-geist-sans), Inter, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono);
+
+  /* Blog-specific Tailwind variables */
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+  --color-link: var(--link);
+  --color-link-hover: var(--link-hover);
+  --color-hover-bg: var(--hover-bg);
+  --color-card-bg: var(--card-bg);
 }
 
 .dark {
@@ -68,6 +86,15 @@
   --border: #1e293b;
   --input: #1e293b;
   --ring: #94a3b8;
+
+  /* Blog-specific dark colors */
+  --text-primary: #f9fafb;
+  --text-secondary: #d1d5db;
+  --text-tertiary: #9ca3af;
+  --link: #60a5fa;
+  --link-hover: #3b82f6;
+  --hover-bg: #1e3a8a;
+  --card-bg: #1f2937;
 }
 
 * {
