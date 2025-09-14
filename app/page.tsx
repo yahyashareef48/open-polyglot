@@ -208,7 +208,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <LanguageLink
               language="german"
               className="group cursor-pointer p-8 rounded-2xl border-2 border-blue-200 dark:border-blue-800 hover:border-blue-500 transition-all duration-300 hover:shadow-xl hover:scale-105"

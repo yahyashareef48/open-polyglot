@@ -82,6 +82,9 @@ export function Navigation() {
               <a href={getNavLink("how-it-works")} className="text-foreground hover:text-primary transition-colors px-3 py-2 rounded-md text-sm font-medium">
                 How It Works
               </a>
+              <a href="/blog" className="text-foreground hover:text-primary transition-colors px-3 py-2 rounded-md text-sm font-medium">
+                Blog
+              </a>
               <a
                 href="https://github.com/yahyashareef48/open-polyglot"
                 target="_blank"
@@ -159,6 +162,13 @@ export function Navigation() {
               onClick={() => setIsMenuOpen(false)}
             >
               How It Works
+            </a>
+            <a
+              href="/blog"
+              className="block px-3 py-2 rounded-md text-base font-medium text-foreground hover:text-primary hover:bg-accent transition-colors"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Blog
             </a>
             <a
               href="https://github.com/yahyashareef48/open-polyglot"
