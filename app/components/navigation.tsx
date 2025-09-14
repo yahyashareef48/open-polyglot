@@ -9,8 +9,10 @@ export function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isOnSubdomain, setIsOnSubdomain] = useState(false);
   const [mainDomainUrl, setMainDomainUrl] = useState("");
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     if (typeof window !== "undefined") {
       const hostname = window.location.hostname;
       const isLocalhost = hostname.includes('localhost');
@@ -103,7 +105,7 @@ export function Navigation() {
               className="p-2 rounded-md text-foreground hover:text-primary hover:bg-accent transition-colors"
               aria-label="Toggle theme"
             >
-              {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
+              {!mounted ? <Sun size={20} /> : theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
             </button>
 
             {!isOnSubdomain && (
