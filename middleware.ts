@@ -7,14 +7,36 @@ export function middleware(request: NextRequest) {
   // Extract subdomain
   const subdomain = hostname.split('.')[0];
 
-  // Define supported languages
-  const languages = ['german', 'french', 'spanish'];
+  // Define supported languages and known languages (that could be requested)
+  const availableLanguages = ['german', 'french', 'spanish'];
+  const knownLanguages = ['german', 'french', 'spanish', 'italian', 'portuguese', 'dutch', 'russian', 'japanese', 'korean', 'mandarin', 'chinese', 'arabic', 'hindi'];
+
+  // Skip processing for main domain (localhost or domain without subdomain)
+  const isMainDomain = hostname === 'localhost:3000' || hostname === 'localhost' || !hostname.includes('.') || hostname === request.nextUrl.host;
+
+  if (!isMainDomain && url.pathname === '/') {
+    // Handle subdomain requests
+    if (availableLanguages.includes(subdomain)) {
+      // Available language - rewrite to language page
+      url.pathname = `/languages/${subdomain}`;
+      return NextResponse.rewrite(url);
+    } else if (knownLanguages.includes(subdomain)) {
+      // Known but unavailable language - show unavailable page
+      url.pathname = '/languages/unavailable';
+      url.searchParams.set('lang', subdomain);
+      return NextResponse.rewrite(url);
+    } else {
+      // Unknown subdomain - show 404
+      url.pathname = '/not-found';
+      return NextResponse.rewrite(url);
+    }
+  }
 
   // If someone visits /languages/[lang] directly, redirect to subdomain
   if (url.pathname.startsWith('/languages/')) {
     const language = url.pathname.split('/')[2];
 
-    if (languages.includes(language)) {
+    if (availableLanguages.includes(language)) {
       const isLocalhost = hostname.includes('localhost');
 
       if (isLocalhost) {
@@ -28,18 +50,13 @@ export function middleware(request: NextRequest) {
         url.pathname = '/';
         return NextResponse.redirect(url);
       }
-    } else {
+    } else if (knownLanguages.includes(language)) {
       // Language not available, redirect to unavailable page
       url.pathname = '/languages/unavailable';
       url.searchParams.set('lang', language);
       return NextResponse.rewrite(url);
     }
-  }
-
-  // If it's a language subdomain and root path, rewrite to language page
-  if (languages.includes(subdomain) && url.pathname === '/') {
-    url.pathname = `/languages/${subdomain}`;
-    return NextResponse.rewrite(url);
+    // For unknown languages in /languages/ path, let Next.js handle 404
   }
 
   return NextResponse.next();
