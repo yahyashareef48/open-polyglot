@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   Globe,
@@ -23,13 +23,13 @@ function LanguageLink({ language, children, className }: { language: string; chi
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     const currentHost = window.location.host;
-    const isLocalhost = currentHost.includes('localhost');
+    const isLocalhost = currentHost.includes("localhost");
 
     if (isLocalhost) {
-      const port = currentHost.includes(':') ? ':' + currentHost.split(':')[1] : '';
+      const port = currentHost.includes(":") ? ":" + currentHost.split(":")[1] : "";
       window.location.href = `http://${language}.localhost${port}`;
     } else {
-      const baseDomain = currentHost.replace(/^[^.]+\./, '');
+      const baseDomain = currentHost.replace(/^[^.]+\./, "");
       window.location.href = `https://${language}.${baseDomain}`;
     }
   };
@@ -202,7 +202,10 @@ export default function Home() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <LanguageLink language="german" className="group cursor-pointer p-8 rounded-2xl border-2 border-blue-200 dark:border-blue-800 hover:border-blue-500 transition-all duration-300 hover:shadow-xl hover:scale-105">
+            <LanguageLink
+              language="german"
+              className="group cursor-pointer p-8 rounded-2xl border-2 border-blue-200 dark:border-blue-800 hover:border-blue-500 transition-all duration-300 hover:shadow-xl hover:scale-105"
+            >
               <div className="text-center">
                 <div className="text-6xl mb-4">🇩🇪</div>
                 <h3 className="text-2xl font-bold text-foreground mb-2">German</h3>
@@ -214,7 +217,10 @@ export default function Home() {
               </div>
             </LanguageLink>
 
-            <LanguageLink language="french" className="group cursor-pointer p-8 rounded-2xl border-2 border-red-200 dark:border-red-800 hover:border-red-500 transition-all duration-300 hover:shadow-xl hover:scale-105">
+            <LanguageLink
+              language="french"
+              className="group cursor-pointer p-8 rounded-2xl border-2 border-red-200 dark:border-red-800 hover:border-red-500 transition-all duration-300 hover:shadow-xl hover:scale-105"
+            >
               <div className="text-center">
                 <div className="text-6xl mb-4">🇫🇷</div>
                 <h3 className="text-2xl font-bold text-foreground mb-2">French</h3>
@@ -226,7 +232,10 @@ export default function Home() {
               </div>
             </LanguageLink>
 
-            <LanguageLink language="spanish" className="group cursor-pointer p-8 rounded-2xl border-2 border-yellow-200 dark:border-yellow-800 hover:border-yellow-500 transition-all duration-300 hover:shadow-xl hover:scale-105">
+            <LanguageLink
+              language="spanish"
+              className="group cursor-pointer p-8 rounded-2xl border-2 border-yellow-200 dark:border-yellow-800 hover:border-yellow-500 transition-all duration-300 hover:shadow-xl hover:scale-105"
+            >
               <div className="text-center">
                 <div className="text-6xl mb-4">🇪🇸</div>
                 <h3 className="text-2xl font-bold text-foreground mb-2">Spanish</h3>
@@ -418,11 +427,6 @@ export default function Home() {
                     🇪🇸 Spanish (Soon)
                   </a>
                 </li>
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    More Languages
-                  </a>
-                </li>
               </ul>
             </div>
 
@@ -440,11 +444,6 @@ export default function Home() {
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Discord
-                  </a>
-                </li>
-                <li>
                   <a
                     href="https://github.com/yahyashareef48/open-polyglot/blob/main/CONTRIBUTING.md"
                     target="_blank"
@@ -452,16 +451,6 @@ export default function Home() {
                     className="hover:text-primary transition-colors"
                   >
                     Contribute
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="https://github.com/yahyashareef48/open-polyglot/blob/main/README.md#roadmap"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:text-primary transition-colors"
-                  >
-                    Roadmap
                   </a>
                 </li>
               </ul>
