@@ -11,8 +11,23 @@ export function middleware(request: NextRequest) {
   const availableLanguages = ['german', 'french', 'spanish'];
   const knownLanguages = ['german', 'french', 'spanish', 'italian', 'portuguese', 'dutch', 'russian', 'japanese', 'korean', 'mandarin', 'chinese', 'arabic', 'hindi'];
 
-  // Skip processing for main domain (localhost or domain without subdomain)
-  const isMainDomain = hostname === 'localhost:3000' || hostname === 'localhost' || !hostname.includes('.') || hostname === request.nextUrl.host;
+  // Define production domain mapping
+  const getBaseDomain = (currentHostname: string): string => {
+    if (currentHostname.includes('localhost')) {
+      const port = currentHostname.includes(':') ? ':' + currentHostname.split(':')[1] : '';
+      return `localhost${port}`;
+    }
+    // For production, always use openpolyglot.org regardless of hosting platform
+    if (currentHostname.includes('openpolyglot.org') || currentHostname.includes('a.run.app')) {
+      return 'openpolyglot.org';
+    }
+    // Fallback for other domains
+    return currentHostname.replace(/^[^.]+\./, '');
+  };
+
+  // Check if we're on the main domain
+  const baseDomain = getBaseDomain(hostname);
+  const isMainDomain = hostname === baseDomain || hostname === 'localhost:3000' || hostname === 'localhost';
 
   if (!isMainDomain && url.pathname === '/') {
     // Handle subdomain requests
@@ -38,6 +53,7 @@ export function middleware(request: NextRequest) {
 
     if (availableLanguages.includes(language)) {
       const isLocalhost = hostname.includes('localhost');
+      const targetBaseDomain = getBaseDomain(hostname);
 
       if (isLocalhost) {
         const port = hostname.includes(':') ? ':' + hostname.split(':')[1] : '';
@@ -45,8 +61,8 @@ export function middleware(request: NextRequest) {
         url.pathname = '/';
         return NextResponse.redirect(url);
       } else {
-        const baseDomain = hostname.replace(/^[^.]+\./, '');
-        url.host = `${language}.${baseDomain}`;
+        url.protocol = 'https:';
+        url.host = `${language}.${targetBaseDomain}`;
         url.pathname = '/';
         return NextResponse.redirect(url);
       }

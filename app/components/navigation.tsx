@@ -26,7 +26,14 @@ export function Navigation() {
           const port = window.location.port ? `:${window.location.port}` : '';
           setMainDomainUrl(`http://localhost${port}`);
         } else {
-          const baseDomain = hostname.replace(/^[^.]+\./, '');
+          // For production, always use openpolyglot.org regardless of hosting platform
+          let baseDomain = "openpolyglot.org";
+          if (hostname.includes("openpolyglot.org") || hostname.includes("a.run.app")) {
+            baseDomain = "openpolyglot.org";
+          } else {
+            // Fallback for other domains
+            baseDomain = hostname.replace(/^[^.]+\./, '');
+          }
           setMainDomainUrl(`https://${baseDomain}`);
         }
       } else {

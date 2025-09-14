@@ -29,7 +29,14 @@ function LanguageLink({ language, children, className }: { language: string; chi
       const port = currentHost.includes(":") ? ":" + currentHost.split(":")[1] : "";
       window.location.href = `http://${language}.localhost${port}`;
     } else {
-      const baseDomain = currentHost.replace(/^[^.]+\./, "");
+      // For production, always use openpolyglot.org regardless of hosting platform
+      let baseDomain = "openpolyglot.org";
+      if (currentHost.includes("openpolyglot.org") || currentHost.includes("a.run.app")) {
+        baseDomain = "openpolyglot.org";
+      } else {
+        // Fallback for other domains
+        baseDomain = currentHost.replace(/^[^.]+\./, "");
+      }
       window.location.href = `https://${language}.${baseDomain}`;
     }
   };
