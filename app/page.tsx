@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Globe,
   Languages,
@@ -16,6 +18,28 @@ import {
   Wifi,
   Target,
 } from "lucide-react";
+
+function LanguageLink({ language, children, className }: { language: string; children: React.ReactNode; className?: string }) {
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const currentHost = window.location.host;
+    const isLocalhost = currentHost.includes('localhost');
+
+    if (isLocalhost) {
+      const port = currentHost.includes(':') ? ':' + currentHost.split(':')[1] : '';
+      window.location.href = `http://${language}.localhost${port}`;
+    } else {
+      const baseDomain = currentHost.replace(/^[^.]+\./, '');
+      window.location.href = `https://${language}.${baseDomain}`;
+    }
+  };
+
+  return (
+    <a href={`/languages/${language}`} onClick={handleClick} className={className}>
+      {children}
+    </a>
+  );
+}
 
 export default function Home() {
   return (
@@ -178,7 +202,7 @@ export default function Home() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <a href="/languages/german" className="group cursor-pointer p-8 rounded-2xl border-2 border-blue-200 dark:border-blue-800 hover:border-blue-500 transition-all duration-300 hover:shadow-xl hover:scale-105">
+            <LanguageLink language="german" className="group cursor-pointer p-8 rounded-2xl border-2 border-blue-200 dark:border-blue-800 hover:border-blue-500 transition-all duration-300 hover:shadow-xl hover:scale-105">
               <div className="text-center">
                 <div className="text-6xl mb-4">🇩🇪</div>
                 <h3 className="text-2xl font-bold text-foreground mb-2">German</h3>
@@ -188,9 +212,9 @@ export default function Home() {
                   <span className="font-medium">Available Now</span>
                 </div>
               </div>
-            </a>
+            </LanguageLink>
 
-            <a href="/languages/french" className="group cursor-pointer p-8 rounded-2xl border-2 border-red-200 dark:border-red-800 hover:border-red-500 transition-all duration-300 hover:shadow-xl hover:scale-105">
+            <LanguageLink language="french" className="group cursor-pointer p-8 rounded-2xl border-2 border-red-200 dark:border-red-800 hover:border-red-500 transition-all duration-300 hover:shadow-xl hover:scale-105">
               <div className="text-center">
                 <div className="text-6xl mb-4">🇫🇷</div>
                 <h3 className="text-2xl font-bold text-foreground mb-2">French</h3>
@@ -200,9 +224,9 @@ export default function Home() {
                   <span className="font-medium">In Development</span>
                 </div>
               </div>
-            </a>
+            </LanguageLink>
 
-            <a href="/languages/spanish" className="group cursor-pointer p-8 rounded-2xl border-2 border-yellow-200 dark:border-yellow-800 hover:border-yellow-500 transition-all duration-300 hover:shadow-xl hover:scale-105">
+            <LanguageLink language="spanish" className="group cursor-pointer p-8 rounded-2xl border-2 border-yellow-200 dark:border-yellow-800 hover:border-yellow-500 transition-all duration-300 hover:shadow-xl hover:scale-105">
               <div className="text-center">
                 <div className="text-6xl mb-4">🇪🇸</div>
                 <h3 className="text-2xl font-bold text-foreground mb-2">Spanish</h3>
@@ -212,7 +236,7 @@ export default function Home() {
                   <span className="font-medium">Coming Soon</span>
                 </div>
               </div>
-            </a>
+            </LanguageLink>
           </div>
         </div>
       </section>
