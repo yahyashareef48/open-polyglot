@@ -74,18 +74,18 @@ export default async function BlogPage() {
             <p className="text-gray-600 dark:text-gray-300 text-lg">Check back soon for development updates and insights!</p>
           </div>
         ) : (
-          <div className="grid gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {posts.map((post: BlogPost) => (
               <Link key={post.slug} href={`/blog/${post.slug}`} className="group block">
-                <article className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl border border-gray-200 dark:border-gray-700 p-8 transition-all duration-300 hover:scale-[1.02] hover:bg-white/80 dark:hover:bg-gray-800/80">
+                <article className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl border border-gray-200 dark:border-gray-700 p-8 transition-all duration-300 hover:scale-[1.02] hover:bg-white/80 dark:hover:bg-gray-800/80 h-full flex flex-col">
                   {/* Post Meta */}
-                  <div className="flex flex-wrap items-center gap-4 mb-4 text-sm">
+                  <div className="flex flex-wrap items-center gap-3 mb-4 text-sm">
                     <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
-                      <Calendar size={16} />
+                      <Calendar size={14} />
                       <time dateTime={post.date}>
                         {new Date(post.date).toLocaleDateString("en-US", {
                           year: "numeric",
-                          month: "long",
+                          month: "short",
                           day: "numeric",
                         })}
                       </time>
@@ -95,21 +95,21 @@ export default async function BlogPage() {
                   </div>
 
                   {/* Post Title */}
-                  <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-4 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-tight">
                     {post.title}
                   </h2>
 
                   {/* Excerpt */}
-                  {post.excerpt && <p className="text-lg text-gray-600 dark:text-gray-300 mb-6 line-clamp-3">{post.excerpt}</p>}
+                  {post.excerpt && <p className="text-gray-600 dark:text-gray-300 mb-6 line-clamp-3 flex-grow">{post.excerpt}</p>}
 
                   {/* Tags & Read More */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex flex-wrap gap-2">
+                  <div className="mt-auto">
+                    <div className="flex flex-wrap gap-2 mb-4">
                       {post.tags &&
-                        post.tags.slice(0, 3).map((tag) => (
+                        post.tags.slice(0, 2).map((tag) => (
                           <span
                             key={tag}
-                            className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 rounded-full text-sm font-medium"
+                            className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 rounded-full text-xs font-medium"
                           >
                             #{tag}
                           </span>
