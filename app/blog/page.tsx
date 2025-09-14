@@ -1,4 +1,4 @@
-import { Calendar, ArrowLeft, ArrowRight, Twitter, Linkedin, User } from "lucide-react";
+import { Calendar, ArrowLeft, ArrowRight, Twitter, Linkedin, User, Github } from "lucide-react";
 import Link from "next/link";
 import { getAllPosts, BlogPost } from "@/lib/blog";
 
@@ -21,7 +21,7 @@ export default async function BlogPage() {
           </div>
 
           <div className="text-center">
-            <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent mb-6">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent mb-6 leading-tight">
               Development Blog
             </h1>
 
@@ -49,6 +49,15 @@ export default async function BlogPage() {
                   title="Connect on LinkedIn"
                 >
                   <Linkedin size={18} />
+                </a>
+                <a
+                  href="https://github.com/yahyashareef48"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 rounded-full hover:bg-blue-100 dark:hover:bg-blue-900/30 hover:text-blue-600 transition-colors"
+                  title="Follow on GitHub"
+                >
+                  <Github size={18} />
                 </a>
               </div>
             </div>
