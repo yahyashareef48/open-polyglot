@@ -1,6 +1,6 @@
 'use client';
 
-import { ThemeProvider as BaseThemeProvider, useTheme } from '@/app/contexts/theme-context';
+import { useTheme } from 'next-themes';
 import { ReactNode, useEffect } from 'react';
 
 interface SpanishThemeProviderProps {
@@ -24,10 +24,8 @@ function SpanishThemeEnhancer({ children }: { children: ReactNode }) {
 
 export function SpanishThemeProvider({ children }: SpanishThemeProviderProps) {
   return (
-    <BaseThemeProvider>
-      <SpanishThemeEnhancer>
-        {children}
-      </SpanishThemeEnhancer>
-    </BaseThemeProvider>
+    <SpanishThemeEnhancer>
+      {children}
+    </SpanishThemeEnhancer>
   );
 }

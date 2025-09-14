@@ -1,6 +1,6 @@
 'use client';
 
-import { ThemeProvider as BaseThemeProvider, useTheme } from '@/app/contexts/theme-context';
+import { useTheme } from 'next-themes';
 import { ReactNode, useEffect } from 'react';
 
 interface FrenchThemeProviderProps {
@@ -24,10 +24,8 @@ function FrenchThemeEnhancer({ children }: { children: ReactNode }) {
 
 export function FrenchThemeProvider({ children }: FrenchThemeProviderProps) {
   return (
-    <BaseThemeProvider>
-      <FrenchThemeEnhancer>
-        {children}
-      </FrenchThemeEnhancer>
-    </BaseThemeProvider>
+    <FrenchThemeEnhancer>
+      {children}
+    </FrenchThemeEnhancer>
   );
 }

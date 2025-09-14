@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { Moon, Sun, Menu, X, Github, ExternalLink, Home } from "lucide-react";
-import { useTheme } from "../contexts/theme-context";
+import { useTheme } from "next-themes";
 
 export function Navigation() {
-  const { theme, toggleTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isOnSubdomain, setIsOnSubdomain] = useState(false);
   const [mainDomainUrl, setMainDomainUrl] = useState("");
@@ -99,7 +99,7 @@ export function Navigation() {
 
           <div className="flex items-center space-x-4">
             <button
-              onClick={toggleTheme}
+              onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
               className="p-2 rounded-md text-foreground hover:text-primary hover:bg-accent transition-colors"
               aria-label="Toggle theme"
             >

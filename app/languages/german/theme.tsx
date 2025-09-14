@@ -1,6 +1,6 @@
 'use client';
 
-import { ThemeProvider as BaseThemeProvider, useTheme } from '@/app/contexts/theme-context';
+import { useTheme } from 'next-themes';
 import { ReactNode, useEffect } from 'react';
 
 interface GermanThemeProviderProps {
@@ -24,10 +24,8 @@ function GermanThemeEnhancer({ children }: { children: ReactNode }) {
 
 export function GermanThemeProvider({ children }: GermanThemeProviderProps) {
   return (
-    <BaseThemeProvider>
-      <GermanThemeEnhancer>
-        {children}
-      </GermanThemeEnhancer>
-    </BaseThemeProvider>
+    <GermanThemeEnhancer>
+      {children}
+    </GermanThemeEnhancer>
   );
 }
