@@ -74,51 +74,49 @@ export default async function BlogPage() {
             <p className="text-gray-600 dark:text-gray-300 text-lg">Check back soon for development updates and insights!</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {posts.map((post: BlogPost) => (
               <Link key={post.slug} href={`/blog/${post.slug}`} className="group block">
-                <article className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl border border-gray-200 dark:border-gray-700 p-8 transition-all duration-300 hover:scale-[1.02] hover:bg-white/80 dark:hover:bg-gray-800/80 h-full flex flex-col">
+                <article className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-lg shadow-md hover:shadow-lg border border-gray-200 dark:border-gray-700 p-4 transition-all duration-300 hover:scale-[1.01] hover:bg-white/80 dark:hover:bg-gray-800/80 h-full flex flex-col">
                   {/* Post Meta */}
-                  <div className="flex flex-wrap items-center gap-3 mb-4 text-sm">
-                    <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
-                      <Calendar size={14} />
-                      <time dateTime={post.date}>
-                        {new Date(post.date).toLocaleDateString("en-US", {
-                          year: "numeric",
-                          month: "short",
-                          day: "numeric",
-                        })}
-                      </time>
-                    </div>
-                    <div className="text-gray-300 dark:text-gray-600">•</div>
-                    <span className="text-gray-500 dark:text-gray-400">5 min read</span>
+                  <div className="flex items-center gap-2 mb-2 text-xs text-gray-500 dark:text-gray-400">
+                    <Calendar size={12} />
+                    <time dateTime={post.date}>
+                      {new Date(post.date).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </time>
+                    <span>•</span>
+                    <span>5 min</span>
                   </div>
 
                   {/* Post Title */}
-                  <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-4 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-tight">
+                  <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-tight line-clamp-2">
                     {post.title}
                   </h2>
 
                   {/* Excerpt */}
-                  {post.excerpt && <p className="text-gray-600 dark:text-gray-300 mb-6 line-clamp-3 flex-grow">{post.excerpt}</p>}
+                  {post.excerpt && <p className="text-sm text-gray-600 dark:text-gray-300 mb-3 line-clamp-2 flex-grow">{post.excerpt}</p>}
 
                   {/* Tags & Read More */}
                   <div className="mt-auto">
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {post.tags &&
-                        post.tags.slice(0, 2).map((tag) => (
-                          <span
-                            key={tag}
-                            className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 rounded-full text-xs font-medium"
-                          >
-                            #{tag}
-                          </span>
-                        ))}
-                    </div>
-
-                    <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-medium group-hover:gap-3 transition-all">
-                      <span>Read more</span>
-                      <ArrowRight size={16} />
+                    <div className="flex items-center justify-between">
+                      <div className="flex gap-1">
+                        {post.tags &&
+                          post.tags.slice(0, 2).map((tag) => (
+                            <span
+                              key={tag}
+                              className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 rounded text-xs"
+                            >
+                              #{tag}
+                            </span>
+                          ))}
+                      </div>
+                      <div className="flex items-center gap-1 text-blue-600 dark:text-blue-400 text-sm font-medium">
+                        <span>Read</span>
+                        <ArrowRight size={14} />
+                      </div>
                     </div>
                   </div>
                 </article>
