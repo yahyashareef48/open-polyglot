@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  const hostname = request.headers.get('host') || '';
+  // Use X-Forwarded-Host for custom domain mapping, fallback to host
+  const hostname = request.headers.get('x-forwarded-host') || request.headers.get('host') || '';
   const url = request.nextUrl.clone();
 
   // Extract subdomain
