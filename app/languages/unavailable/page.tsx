@@ -2,8 +2,9 @@
 
 import { Github, ArrowLeft, Languages } from "lucide-react";
 import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 
-export default function UnavailableLanguage() {
+function UnavailableContent() {
   const searchParams = useSearchParams();
   const requestedLanguage = searchParams.get('lang') || 'Unknown';
 
@@ -61,5 +62,20 @@ export default function UnavailableLanguage() {
         </div>
       </section>
     </div>
+  );
+}
+
+export default function UnavailableLanguage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-8xl mb-8">🌍</div>
+          <div className="text-xl text-gray-600 dark:text-gray-300">Loading...</div>
+        </div>
+      </div>
+    }>
+      <UnavailableContent />
+    </Suspense>
   );
 }
