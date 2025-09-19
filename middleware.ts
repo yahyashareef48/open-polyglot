@@ -7,6 +7,14 @@ export function middleware(request: NextRequest) {
   // Extract subdomain
   const subdomain = hostname.split('.')[0];
 
+  // Debug logging
+  console.log('🔍 Middleware Debug:', {
+    hostname,
+    subdomain,
+    pathname: url.pathname,
+    userAgent: request.headers.get('user-agent')?.slice(0, 50)
+  });
+
   // Define supported languages and known languages (that could be requested)
   const availableLanguages = ['german', 'french', 'spanish'];
   const knownLanguages = ['german', 'french', 'spanish', 'italian', 'portuguese', 'dutch', 'russian', 'japanese', 'korean', 'mandarin', 'chinese', 'arabic', 'hindi'];
@@ -33,10 +41,17 @@ export function middleware(request: NextRequest) {
   const baseDomain = getBaseDomain(hostname);
   const isMainDomain = hostname === baseDomain || hostname === 'localhost:3000' || hostname === 'localhost';
 
+  console.log('🎯 Domain Check:', {
+    baseDomain,
+    isMainDomain,
+    condition: !isMainDomain && url.pathname === '/'
+  });
+
   if (!isMainDomain && url.pathname === '/') {
     // Handle subdomain requests
     if (availableLanguages.includes(subdomain)) {
       // Available language - rewrite to language page
+      console.log('✅ Rewriting to:', `/languages/${subdomain}`);
       url.pathname = `/languages/${subdomain}`;
       return NextResponse.rewrite(url);
     } else if (knownLanguages.includes(subdomain)) {
