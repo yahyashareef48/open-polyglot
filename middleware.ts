@@ -18,8 +18,12 @@ export function middleware(request: NextRequest) {
       return `localhost${port}`;
     }
     // For production, always use openpolyglot.org regardless of hosting platform
-    if (currentHostname.includes('openpolyglot.org') || currentHostname.includes('a.run.app')) {
+    if (currentHostname.includes('openpolyglot.org')) {
       return 'openpolyglot.org';
+    }
+    // Handle Cloud Run URLs
+    if (currentHostname.includes('a.run.app')) {
+      return currentHostname; // Use the full Cloud Run domain as base
     }
     // Fallback for other domains
     return currentHostname.replace(/^[^.]+\./, '');
