@@ -12,7 +12,7 @@ export interface BlogPost {
 }
 
 // List of blog post files (you'll need to maintain this manually or create a build script)
-const blogPosts = ["2025-01-13-theme-system.md", "2025-01-14-project-launch.md", "2025-01-15-subdomain-routing.md"];
+const blogPosts = ["2025-09-19-project-initiation.md"];
 
 export async function getAllPosts(): Promise<BlogPost[]> {
   const allPostsData = await Promise.all(
