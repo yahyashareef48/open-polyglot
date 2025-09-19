@@ -84,7 +84,7 @@ export function Navigation() {
               <a href={getNavLink("how-it-works")} className="text-foreground hover:text-primary transition-colors px-3 py-2 rounded-md text-sm font-medium">
                 How It Works
               </a>
-              <a href="/blog" className="text-foreground hover:text-primary transition-colors px-3 py-2 rounded-md text-sm font-medium">
+              <a href={isOnSubdomain ? `${mainDomainUrl}/blog` : "/blog"} className="text-foreground hover:text-primary transition-colors px-3 py-2 rounded-md text-sm font-medium">
                 Blog
               </a>
               <a
@@ -166,7 +166,7 @@ export function Navigation() {
               How It Works
             </a>
             <a
-              href="/blog"
+              href={isOnSubdomain ? `${mainDomainUrl}/blog` : "/blog"}
               className="block px-3 py-2 rounded-md text-base font-medium text-foreground hover:text-primary hover:bg-accent transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
