@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Moon, Sun, Menu, X, Github, ExternalLink, Home } from "lucide-react";
 import { useTheme } from "next-themes";
+import Image from "next/image";
 
 export function Navigation() {
   const { theme, setTheme } = useTheme();
@@ -61,8 +62,17 @@ export function Navigation() {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
             <div className="flex-shrink-0">
-              <a href={isOnSubdomain ? mainDomainUrl : "/"} className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent hover:opacity-80 transition-opacity">
-                Open Polyglot
+              <a href={isOnSubdomain ? mainDomainUrl : "/"} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                <Image
+                  src="/logo/logo-owl-no-bg.png"
+                  alt="Open Polyglot Logo"
+                  width={40}
+                  height={40}
+                  className="object-contain"
+                />
+                <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  Open Polyglot
+                </span>
               </a>
             </div>
           </div>

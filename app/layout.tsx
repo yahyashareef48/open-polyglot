@@ -23,6 +23,10 @@ export const metadata: Metadata = {
     "language courses alternative",
   ],
   authors: [{ name: "Open Polyglot" }],
+  icons: {
+    icon: "/logo/logo-owl-no-bg.png",
+    apple: "/logo/logo-owl-no-bg.png",
+  },
   openGraph: {
     title: "Open Polyglot - Learn Languages for Free",
     description: "The free, open-source language learning platform. Learn German, French, Spanish and more without expensive courses.",
@@ -30,11 +34,20 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://openpolyglot.org",
     siteName: "Open Polyglot",
+    images: [
+      {
+        url: "/logo/full-logo-no-bg.png",
+        width: 1200,
+        height: 630,
+        alt: "Open Polyglot Logo",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Open Polyglot - Learn Languages for Free",
     description: "The free, open-source language learning platform. Learn German, French, Spanish and more without expensive courses.",
+    images: ["/logo/full-logo-no-bg.png"],
   },
   robots: {
     index: true,

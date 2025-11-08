@@ -18,6 +18,7 @@ import {
   Wifi,
   Target,
 } from "lucide-react";
+import Image from "next/image";
 
 function LanguageLink({ language, children, className }: { language: string; children: React.ReactNode; className?: string }) {
   const handleClick = (e: React.MouseEvent) => {
@@ -392,7 +393,16 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-8">
             <div className="col-span-2">
-              <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">Open Polyglot</h3>
+              <div className="flex items-center gap-2 mb-4">
+                <Image
+                  src="/logo/logo-owl-no-bg.png"
+                  alt="Open Polyglot Logo"
+                  width={48}
+                  height={48}
+                  className="object-contain"
+                />
+                <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Open Polyglot</h3>
+              </div>
               <p className="text-muted-foreground mb-4 max-w-md">
                 The free, open-source language learning platform. Making quality language education accessible to everyone, everywhere.
               </p>
