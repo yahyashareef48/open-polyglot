@@ -16,38 +16,23 @@ import {
   BreadcrumbItem,
   ContentPath,
 } from '@/app/types/content';
+import { readFile } from 'fs/promises';
+import { join } from 'path';
 
-const CONTENT_BASE_URL = '/content/languages';
-
-/**
- * Get the base URL for fetching content
- * In server components, we need an absolute URL
- * In client components, we can use relative URLs
- */
-function getBaseUrl(): string {
-  // Check if we're on the server
-  if (typeof window === 'undefined') {
-    // Server-side: use localhost for development
-    return process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-  }
-  // Client-side: use relative URLs
-  return '';
-}
+const CONTENT_BASE_PATH = 'public/content/languages';
 
 /**
- * Generic fetch function for JSON content
+ * Generic function to read and parse JSON content from the filesystem
  */
-async function fetchJSON<T>(path: string): Promise<T> {
-  const baseUrl = getBaseUrl();
-  const url = `${baseUrl}${path}`;
+async function readJSON<T>(relativePath: string): Promise<T> {
+  const filePath = join(process.cwd(), CONTENT_BASE_PATH, relativePath);
 
-  const response = await fetch(url);
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch content from ${url}: ${response.statusText}`);
+  try {
+    const fileContent = await readFile(filePath, 'utf-8');
+    return JSON.parse(fileContent);
+  } catch (error) {
+    throw new Error(`Failed to read content from ${filePath}: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
-
-  return response.json();
 }
 
 // ============================================================================
@@ -59,8 +44,8 @@ async function fetchJSON<T>(path: string): Promise<T> {
  * @param languageCode - Language code (e.g., 'german', 'french')
  */
 export async function getLanguageMetadata(languageCode: string): Promise<LanguageMetadata> {
-  const url = `${CONTENT_BASE_URL}/${languageCode}/metadata.json`;
-  return fetchJSON<LanguageMetadata>(url);
+  const path = `${languageCode}/metadata.json`;
+  return readJSON<LanguageMetadata>(path);
 }
 
 /**
@@ -85,8 +70,8 @@ export async function getLevelMetadata(
   languageCode: string,
   levelId: string
 ): Promise<LevelMetadata> {
-  const url = `${CONTENT_BASE_URL}/${languageCode}/${levelId}/metadata.json`;
-  return fetchJSON<LevelMetadata>(url);
+  const path = `${languageCode}/${levelId}/metadata.json`;
+  return readJSON<LevelMetadata>(path);
 }
 
 /**
@@ -115,8 +100,8 @@ export async function getSectionMetadata(
   levelId: string,
   sectionId: string
 ): Promise<SectionMetadata> {
-  const url = `${CONTENT_BASE_URL}/${languageCode}/${levelId}/${sectionId}/metadata.json`;
-  return fetchJSON<SectionMetadata>(url);
+  const path = `${languageCode}/${levelId}/${sectionId}/metadata.json`;
+  return readJSON<SectionMetadata>(path);
 }
 
 /**
@@ -155,8 +140,8 @@ export async function getLessonContent(
   sectionId: string,
   lessonId: string
 ): Promise<LessonContent> {
-  const url = `${CONTENT_BASE_URL}/${languageCode}/${levelId}/${sectionId}/lessons/${lessonId}/content.json`;
-  return fetchJSON<LessonContent>(url);
+  const path = `${languageCode}/${levelId}/${sectionId}/lessons/${lessonId}/content.json`;
+  return readJSON<LessonContent>(path);
 }
 
 /**
@@ -198,8 +183,8 @@ export async function getQuiz(
   lessonId: string
 ): Promise<Quiz | null> {
   try {
-    const url = `${CONTENT_BASE_URL}/${languageCode}/${levelId}/${sectionId}/lessons/${lessonId}/quiz.json`;
-    return await fetchJSON<Quiz>(url);
+    const path = `${languageCode}/${levelId}/${sectionId}/lessons/${lessonId}/quiz.json`;
+    return await readJSON<Quiz>(path);
   } catch (error) {
     // Quiz might not exist for this lesson
     return null;
@@ -220,8 +205,8 @@ export async function getExercises(
   lessonId: string
 ): Promise<Exercises | null> {
   try {
-    const url = `${CONTENT_BASE_URL}/${languageCode}/${levelId}/${sectionId}/lessons/${lessonId}/exercises.json`;
-    return await fetchJSON<Exercises>(url);
+    const path = `${languageCode}/${levelId}/${sectionId}/lessons/${lessonId}/exercises.json`;
+    return await readJSON<Exercises>(path);
   } catch (error) {
     // Exercises might not exist for this lesson
     return null;
