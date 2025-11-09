@@ -1,31 +1,9 @@
-"use client";
-
 import { Calendar, ArrowLeft, ArrowRight, Twitter, Linkedin, User, Github } from "lucide-react";
 import Link from "next/link";
 import { getAllPosts, BlogPost } from "@/lib/blog";
-import { useEffect, useState } from "react";
 
-export default function BlogPage() {
-  const [posts, setPosts] = useState<BlogPost[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    getAllPosts().then((posts) => {
-      setPosts(posts);
-      setLoading(false);
-    });
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-slate-900 dark:to-gray-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-300">Loading blog posts...</p>
-        </div>
-      </div>
-    );
-  }
+export default async function BlogPage() {
+  const posts = await getAllPosts();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-slate-900 dark:to-gray-900">

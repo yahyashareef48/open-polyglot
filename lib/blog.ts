@@ -1,5 +1,7 @@
 import matter from "gray-matter";
 import { marked } from "marked";
+import { readFile } from "fs/promises";
+import { join } from "path";
 
 export interface BlogPost {
   slug: string;
@@ -13,6 +15,7 @@ export interface BlogPost {
 
 // List of blog post files (you'll need to maintain this manually or create a build script)
 const blogPosts = ["2025-02-10-content-structure-complete.md", "2025-09-19-project-initiation.md"];
+const BLOG_PATH = "public/content/blog";
 
 export async function getAllPosts(): Promise<BlogPost[]> {
   const allPostsData = await Promise.all(
@@ -20,12 +23,8 @@ export async function getAllPosts(): Promise<BlogPost[]> {
       const slug = fileName.replace(/\.md$/, "");
 
       try {
-        const response = await fetch(`/content/blog/${fileName}`);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch ${fileName}`);
-        }
-
-        const fileContents = await response.text();
+        const filePath = join(process.cwd(), BLOG_PATH, fileName);
+        const fileContents = await readFile(filePath, "utf-8");
         const { data, content } = matter(fileContents);
 
         // Process markdown content to HTML using marked
@@ -59,12 +58,8 @@ export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
       return null;
     }
 
-    const response = await fetch(`/content/blog/${fileName}`);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch ${fileName}`);
-    }
-
-    const fileContents = await response.text();
+    const filePath = join(process.cwd(), BLOG_PATH, fileName);
+    const fileContents = await readFile(filePath, "utf-8");
     const { data, content } = matter(fileContents);
 
     // Process markdown content to HTML using marked

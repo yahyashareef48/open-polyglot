@@ -1,9 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  experimental: {
-    serverComponentsExternalPackages: []
-  }
+  serverExternalPackages: [],
+  images: {
+    unoptimized: true,
+  },
 };
 
 export default nextConfig;

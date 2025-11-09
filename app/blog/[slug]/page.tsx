@@ -1,10 +1,8 @@
-"use client";
-
-import { Calendar, ArrowLeft, Twitter, Linkedin, User, Share2, Clock, Github } from 'lucide-react';
+import { Calendar, ArrowLeft, Twitter, Linkedin, User, Clock, Github } from 'lucide-react';
 import Link from 'next/link';
-import { getPostBySlug, getAllPosts, BlogPost } from '@/lib/blog';
+import { getPostBySlug, getAllPosts } from '@/lib/blog';
 import { notFound } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { ShareButtons } from './share-buttons';
 
 interface Props {
   params: {
@@ -12,30 +10,8 @@ interface Props {
   };
 }
 
-export default function BlogPostPage({ params }: Props) {
-  const [post, setPost] = useState<BlogPost | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    getPostBySlug(params.slug).then((post) => {
-      if (!post) {
-        notFound();
-      }
-      setPost(post);
-      setLoading(false);
-    });
-  }, [params.slug]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-slate-900 dark:to-gray-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-300">Loading blog post...</p>
-        </div>
-      </div>
-    );
-  }
+export default async function BlogPostPage({ params }: Props) {
+  const post = await getPostBySlug(params.slug);
 
   if (!post) {
     notFound();
@@ -108,26 +84,7 @@ export default function BlogPostPage({ params }: Props) {
           <div className="flex items-center justify-between pt-6 border-t border-gray-200 dark:border-gray-700">
             <div className="flex items-center gap-4">
               <span className="text-gray-500 dark:text-gray-400 text-sm">Share this post:</span>
-              <div className="flex items-center gap-2">
-                <a
-                  href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(typeof window !== 'undefined' ? window.location.href : '')}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-2 rounded-full hover:bg-blue-100 dark:hover:bg-blue-900/30 hover:text-blue-600 text-gray-500 dark:text-gray-400 transition-colors"
-                  title="Share on X/Twitter"
-                >
-                  <Twitter size={18} />
-                </a>
-                <a
-                  href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(typeof window !== 'undefined' ? window.location.href : '')}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-2 rounded-full hover:bg-blue-100 dark:hover:bg-blue-900/30 hover:text-blue-600 text-gray-500 dark:text-gray-400 transition-colors"
-                  title="Share on LinkedIn"
-                >
-                  <Linkedin size={18} />
-                </a>
-              </div>
+              <ShareButtons title={post.title} />
             </div>
 
             <div className="flex items-center gap-3">
