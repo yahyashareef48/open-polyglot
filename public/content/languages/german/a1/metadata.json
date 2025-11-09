@@ -1,0 +1,27 @@
+{
+  "$schema": "Level Metadata Schema",
+  "id": "a1",
+  "name": "A1 - Beginner",
+  "cefr": "A1",
+  "description": "Start your German learning journey! A1 level focuses on basic phrases, simple interactions, and foundational grammar.",
+  "estimatedHours": 80,
+  "sections": [
+    {
+      "id": "intro",
+      "title": "Introduction",
+      "description": "Essential information to get started with your German learning journey",
+      "order": 0,
+      "lessonsCount": 4,
+      "enabled": true
+    }
+  ],
+  "objectives": [
+    "Understand familiar words and basic phrases",
+    "Introduce yourself and others",
+    "Ask and answer simple questions",
+    "Interact in a simple way with slow, clear speech",
+    "Write short, simple postcards and fill in forms"
+  ],
+  "version": "1.0.0",
+  "lastUpdated": "2025-01-09"
+}

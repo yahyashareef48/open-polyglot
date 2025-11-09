@@ -1,0 +1,20 @@
+{
+  "$schema": "Lesson Content Schema",
+  "id": "02-action-plan",
+  "title": "Your Learning Action Plan",
+  "type": "informational",
+  "sections": [
+    {
+      "type": "text",
+      "content": "# Your Learning Action Plan 📋\n\nFor optimal learning results, I can recommend you follow these steps:\n\n## The Learning Process\n\n👀  **Watch the entire lecture and get an overview of the topic.**\n\n🗣️  **Try to speak after me whenever I say a German phrase** (pay attention to the pronunciation!)\n\n🤔  **Check if you have understood the topic in the lesson** (or if you need to rewatch it)\n\n📚  **Read the explanation text / lesson summary** in the video description.\n\n📝  **Do the exercises** in the video description (I can recommend doing them on paper!)\n\n✅  **Check with the solutions and correct your mistakes.** Try to understand what the issue was.\n\n🧠  **Reflect on what you have learned.**\n\n📌  **Come back to a lesson whenever you feel like it.**\n\n## The Key to Success: Immersion\n\n**The more German you speak, write, hear and read, the faster you will learn the language!**\n\nThis technique is called **immersion**, which means consuming as much content about the German language as possible.\n\n**You don't have to do all the exercises, but more is truly better here!**\n\n## You Got This! ❤️\n\nRemember, language learning is a marathon, not a sprint. Consistency beats intensity every time. Even 15 minutes a day is better than cramming for hours once a week.\n\nStay motivated, be patient with yourself, and enjoy the process of discovering a new language and culture!"
+    }
+  ],
+  "metadata": {
+    "lessonNumber": 2,
+    "sectionId": "intro",
+    "levelId": "a1",
+    "languageCode": "de",
+    "version": "1.0.0",
+    "lastUpdated": "2025-01-09"
+  }
+}

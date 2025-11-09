@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(dir /s /b \"c:\\Users\\yahya\\projects\\programing\\webdev\\personal-projects\\open-polyglot\")"
     ],
     "deny": [],
     "ask": []

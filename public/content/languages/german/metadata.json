@@ -1,0 +1,50 @@
+{
+  "$schema": "Language Metadata Schema",
+  "code": "de",
+  "name": "German",
+  "nativeName": "Deutsch",
+  "description": "Learn German from scratch with comprehensive lessons covering all CEFR levels from A1 to C2",
+  "flagEmoji": "🇩🇪",
+  "availableLevels": [
+    {
+      "id": "a1",
+      "name": "A1 - Beginner",
+      "enabled": true
+    },
+    {
+      "id": "a2",
+      "name": "A2 - Elementary",
+      "enabled": false
+    },
+    {
+      "id": "b1",
+      "name": "B1 - Intermediate",
+      "enabled": false
+    },
+    {
+      "id": "b2",
+      "name": "B2 - Upper Intermediate",
+      "enabled": false
+    },
+    {
+      "id": "c1",
+      "name": "C1 - Advanced",
+      "enabled": false
+    },
+    {
+      "id": "c2",
+      "name": "C2 - Proficient",
+      "enabled": false
+    }
+  ],
+  "themeColors": {
+    "primary": "#DE3831",
+    "secondary": "#FFCE00",
+    "tertiary": "#000000"
+  },
+  "contributors": [
+    "Open Polyglot Team"
+  ],
+  "version": "1.0.0",
+  "lastUpdated": "2025-01-09"
+}

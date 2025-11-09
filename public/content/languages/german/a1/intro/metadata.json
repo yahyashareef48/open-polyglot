@@ -1,0 +1,51 @@
+{
+  "$schema": "Section Metadata Schema",
+  "id": "intro",
+  "title": "Introduction",
+  "description": "Before you start learning German, familiarize yourself with the learning approach, resources, and what to expect at each level.",
+  "order": 0,
+  "lessons": [
+    {
+      "id": "01-welcome",
+      "title": "Welcome to Open Polyglot",
+      "description": "Introduction to the platform and learning approach",
+      "order": 1,
+      "type": "informational",
+      "estimatedMinutes": 5,
+      "hasQuiz": false,
+      "hasExercises": false
+    },
+    {
+      "id": "02-action-plan",
+      "title": "Your Learning Action Plan",
+      "description": "Step-by-step guide for optimal learning results",
+      "order": 2,
+      "type": "informational",
+      "estimatedMinutes": 5,
+      "hasQuiz": false,
+      "hasExercises": false
+    },
+    {
+      "id": "03-useful-resources",
+      "title": "Useful Resources",
+      "description": "External tools, apps, and content to enhance your learning",
+      "order": 3,
+      "type": "informational",
+      "estimatedMinutes": 10,
+      "hasQuiz": false,
+      "hasExercises": false
+    },
+    {
+      "id": "04-a1-requirements",
+      "title": "CEFR Level Requirements",
+      "description": "Detailed breakdown of requirements for all CEFR levels from A1 to C2",
+      "order": 4,
+      "type": "informational",
+      "estimatedMinutes": 15,
+      "hasQuiz": false,
+      "hasExercises": false
+    }
+  ],
+  "version": "1.0.0",
+  "lastUpdated": "2025-01-09"
+}
