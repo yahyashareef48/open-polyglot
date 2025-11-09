@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { Menu, X, Github, ExternalLink, Home } from "lucide-react";
-import Image from "next/image";
 
 export function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -59,7 +58,7 @@ export function Navigation() {
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <a href={isOnSubdomain ? mainDomainUrl : "/"} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-                <Image
+                <img
                   src="/logo/logo-owl-no-bg.png"
                   alt="Open Polyglot Logo"
                   width={40}
