@@ -260,17 +260,17 @@ export async function getNavigationInfo(
     previous: previousLesson ? {
       id: previousLesson.id,
       title: previousLesson.title,
-      url: `/languages/${languageCode}/${levelId}/${sectionId}/${previousLesson.id}`,
+      url: `/${levelId}/${sectionId}/${previousLesson.id}`,
     } : undefined,
     next: nextLesson ? {
       id: nextLesson.id,
       title: nextLesson.title,
-      url: `/languages/${languageCode}/${levelId}/${sectionId}/${nextLesson.id}`,
+      url: `/${levelId}/${sectionId}/${nextLesson.id}`,
     } : undefined,
     parent: {
       type: 'section',
       title: sectionMeta.title,
-      url: `/languages/${languageCode}/${levelId}/${sectionId}`,
+      url: `/${levelId}/${sectionId}`,
     },
   };
 }
@@ -297,7 +297,7 @@ export async function getBreadcrumbs(path: Partial<ContentPath>): Promise<Breadc
   const langMeta = await getLanguageMetadata(path.language);
   breadcrumbs.push({
     label: langMeta.name,
-    url: `/languages/${path.language}`,
+    url: `/`,
     active: !path.level,
   });
 
@@ -309,7 +309,7 @@ export async function getBreadcrumbs(path: Partial<ContentPath>): Promise<Breadc
   const levelMeta = await getLevelMetadata(path.language, path.level);
   breadcrumbs.push({
     label: levelMeta.name,
-    url: `/languages/${path.language}/${path.level}`,
+    url: `/${path.level}`,
     active: !path.section,
   });
 
@@ -321,7 +321,7 @@ export async function getBreadcrumbs(path: Partial<ContentPath>): Promise<Breadc
   const sectionMeta = await getSectionMetadata(path.language, path.level, path.section);
   breadcrumbs.push({
     label: sectionMeta.title,
-    url: `/languages/${path.language}/${path.level}/${path.section}`,
+    url: `/${path.level}/${path.section}`,
     active: !path.lesson,
   });
 
@@ -334,7 +334,7 @@ export async function getBreadcrumbs(path: Partial<ContentPath>): Promise<Breadc
   if (lesson) {
     breadcrumbs.push({
       label: lesson.title,
-      url: `/languages/${path.language}/${path.level}/${path.section}/${path.lesson}`,
+      url: `/${path.level}/${path.section}/${path.lesson}`,
       active: true,
     });
   }

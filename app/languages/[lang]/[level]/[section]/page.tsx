@@ -29,7 +29,7 @@ export default async function SectionPage({ params }: SectionPageProps) {
         <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <Link
-              href={`/languages/${lang}/${level}`}
+              href={`/${level}`}
               className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white mb-2 inline-block"
             >
               ← Back to {levelMeta.name}
@@ -94,7 +94,7 @@ export default async function SectionPage({ params }: SectionPageProps) {
               return (
                 <Link
                   key={lesson.id}
-                  href={`/languages/${lang}/${level}/${section}/${lesson.id}`}
+                  href={`/${level}/${section}/${lesson.id}`}
                   className="block group"
                 >
                   <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 p-6 border-l-4 border-transparent hover:border-red-600">
@@ -168,7 +168,7 @@ export default async function SectionPage({ params }: SectionPageProps) {
             The section you're looking for doesn't exist or is not yet available.
           </p>
           <Link
-            href={`/languages/${lang}/${level}`}
+            href={`/${level}`}
             className="text-red-600 hover:text-red-700 underline"
           >
             ← Back to Level Overview

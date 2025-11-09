@@ -130,7 +130,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
             The lesson you're looking for doesn't exist or is not yet available.
           </p>
           <Link
-            href={`/languages/${lang}/${level}/${section}`}
+            href={`/${level}/${section}`}
             className="text-red-600 hover:text-red-700 underline"
           >
             ← Back to Section

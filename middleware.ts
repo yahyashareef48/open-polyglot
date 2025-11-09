@@ -36,17 +36,20 @@ export function middleware(request: NextRequest) {
   const isMainDomain = hostname === baseDomain || hostname === 'localhost:3000' || hostname === 'localhost';
 
 
-  if (!isMainDomain && url.pathname === '/') {
-    // Handle subdomain requests
+  if (!isMainDomain) {
+    // Handle subdomain requests - rewrite all paths to include /languages/[subdomain]
     if (availableLanguages.includes(subdomain)) {
-      // Available language - rewrite to language page
-      url.pathname = `/languages/${subdomain}`;
+      // Available language - rewrite to language page while preserving the path
+      const currentPath = url.pathname;
+      url.pathname = `/languages/${subdomain}${currentPath}`;
       return NextResponse.rewrite(url);
     } else if (knownLanguages.includes(subdomain)) {
-      // Known but unavailable language - show unavailable page
-      url.pathname = '/languages/unavailable';
-      url.searchParams.set('lang', subdomain);
-      return NextResponse.rewrite(url);
+      // Known but unavailable language - show unavailable page (only for root path)
+      if (url.pathname === '/') {
+        url.pathname = '/languages/unavailable';
+        url.searchParams.set('lang', subdomain);
+        return NextResponse.rewrite(url);
+      }
     } else {
       // Unknown subdomain - show 404
       url.pathname = '/not-found';
@@ -54,9 +57,11 @@ export function middleware(request: NextRequest) {
     }
   }
 
-  // If someone visits /languages/[lang] directly, redirect to subdomain
-  if (url.pathname.startsWith('/languages/')) {
-    const language = url.pathname.split('/')[2];
+  // If someone visits /languages/[lang] directly on main domain, redirect to subdomain
+  if (isMainDomain && url.pathname.startsWith('/languages/')) {
+    const pathParts = url.pathname.split('/').filter(Boolean); // ['languages', 'german', 'a1', ...]
+    const language = pathParts[1]; // 'german'
+    const remainingPath = pathParts.slice(2).join('/'); // 'a1/...' or ''
 
     if (availableLanguages.includes(language)) {
       const isLocalhost = hostname.includes('localhost');
@@ -65,12 +70,12 @@ export function middleware(request: NextRequest) {
       if (isLocalhost) {
         const port = hostname.includes(':') ? ':' + hostname.split(':')[1] : '';
         url.host = `${language}.localhost${port}`;
-        url.pathname = '/';
+        url.pathname = remainingPath ? `/${remainingPath}` : '/';
         return NextResponse.redirect(url);
       } else {
         url.protocol = 'https:';
         url.host = `${language}.${targetBaseDomain}`;
-        url.pathname = '/';
+        url.pathname = remainingPath ? `/${remainingPath}` : '/';
         return NextResponse.redirect(url);
       }
     } else if (knownLanguages.includes(language)) {

@@ -30,7 +30,7 @@ export default async function GermanHome() {
                   level.enabled ? (
                     <Link
                       key={level.id}
-                      href={`/languages/german/${level.id}`}
+                      href={`/${level.id}`}
                       className="group"
                     >
                       <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-red-600">
