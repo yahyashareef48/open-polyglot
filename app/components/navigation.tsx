@@ -1,19 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Moon, Sun, Menu, X, Github, ExternalLink, Home } from "lucide-react";
-import { useTheme } from "next-themes";
+import { Menu, X, Github, ExternalLink, Home } from "lucide-react";
 import Image from "next/image";
 
 export function Navigation() {
-  const { theme, setTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isOnSubdomain, setIsOnSubdomain] = useState(false);
   const [mainDomainUrl, setMainDomainUrl] = useState("");
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
     if (typeof window !== "undefined") {
       const hostname = window.location.hostname;
       const isLocalhost = hostname.includes('localhost');
@@ -110,14 +106,6 @@ export function Navigation() {
           </div>
 
           <div className="flex items-center space-x-4">
-            <button
-              onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-              className="p-2 rounded-md text-foreground hover:text-primary hover:bg-accent transition-colors"
-              aria-label="Toggle theme"
-            >
-              {!mounted ? <Sun size={20} /> : theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
-            </button>
-
             {!isOnSubdomain && (
               <div className="hidden md:block">
                 <a href={getNavLink("languages")} className="bg-primary text-primary-foreground hover:bg-primary/90 transition-colors px-4 py-2 rounded-md text-sm font-medium flex items-center gap-2">
