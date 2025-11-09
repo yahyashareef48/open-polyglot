@@ -20,9 +20,27 @@ import {
 const CONTENT_BASE_URL = '/content/languages';
 
 /**
+ * Get the base URL for fetching content
+ * In server components, we need an absolute URL
+ * In client components, we can use relative URLs
+ */
+function getBaseUrl(): string {
+  // Check if we're on the server
+  if (typeof window === 'undefined') {
+    // Server-side: use localhost for development
+    return process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+  }
+  // Client-side: use relative URLs
+  return '';
+}
+
+/**
  * Generic fetch function for JSON content
  */
-async function fetchJSON<T>(url: string): Promise<T> {
+async function fetchJSON<T>(path: string): Promise<T> {
+  const baseUrl = getBaseUrl();
+  const url = `${baseUrl}${path}`;
+
   const response = await fetch(url);
 
   if (!response.ok) {
