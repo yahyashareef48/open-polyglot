@@ -1,0 +1,6 @@
+# Firebase App Hosting configuration for Next.js
+# Ensures public folder and static assets are copied to standalone build
+
+runConfig:
+  minInstances: 0
+  maxInstances: 1

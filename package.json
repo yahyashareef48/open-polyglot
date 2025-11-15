@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
+    "postbuild": "cp -r public .next/standalone/ 2>/dev/null || xcopy /E /I /Y public .next\\standalone\\public && cp -r .next/static .next/standalone/.next/ 2>/dev/null || xcopy /E /I /Y .next\\static .next\\standalone\\.next\\static",
     "start": "next start"
   },
   "dependencies": {
