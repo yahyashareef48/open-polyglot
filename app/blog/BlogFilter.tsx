@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Search, X, Filter } from "lucide-react";
+import { Search, X, Filter, ArrowUpDown } from "lucide-react";
 import { BlogPost } from "@/lib/blog";
 import Link from "next/link";
 import { Calendar, ArrowRight } from "lucide-react";
+
+type SortOption = "newest" | "oldest" | "title-asc" | "title-desc";
 
 interface BlogFilterProps {
   posts: BlogPost[];
@@ -14,6 +16,7 @@ export default function BlogFilter({ posts }: BlogFilterProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
+  const [sortBy, setSortBy] = useState<SortOption>("newest");
 
   // Extract all unique tags from posts
   const allTags = useMemo(() => {
@@ -24,9 +27,10 @@ export default function BlogFilter({ posts }: BlogFilterProps) {
     return Array.from(tags).sort();
   }, [posts]);
 
-  // Filter posts based on search query and selected tags
+  // Filter and sort posts
   const filteredPosts = useMemo(() => {
-    return posts.filter((post) => {
+    // First, filter posts
+    const filtered = posts.filter((post) => {
       // Search filter
       const matchesSearch =
         searchQuery === "" ||
@@ -39,7 +43,23 @@ export default function BlogFilter({ posts }: BlogFilterProps) {
 
       return matchesSearch && matchesTags;
     });
-  }, [posts, searchQuery, selectedTags]);
+
+    // Then, sort posts
+    return filtered.sort((a, b) => {
+      switch (sortBy) {
+        case "newest":
+          return a.date > b.date ? -1 : 1;
+        case "oldest":
+          return a.date < b.date ? -1 : 1;
+        case "title-asc":
+          return a.title.localeCompare(b.title);
+        case "title-desc":
+          return b.title.localeCompare(a.title);
+        default:
+          return 0;
+      }
+    });
+  }, [posts, searchQuery, selectedTags, sortBy]);
 
   const toggleTag = (tag: string) => {
     setSelectedTags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]));
@@ -56,68 +76,86 @@ export default function BlogFilter({ posts }: BlogFilterProps) {
     <div className="space-y-6">
       {/* Search and Filter Controls */}
       <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-lg shadow-md border border-gray-200 dark:border-gray-700 p-4">
-        <div className="flex flex-col sm:flex-row gap-4">
-          {/* Search Input */}
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-            <input
-              type="text"
-              placeholder="Search posts by title, content, or tags..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
-            />
+        <div className="flex flex-col gap-4">
+          {/* Top Row: Search and Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4">
+            {/* Search Input */}
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+              <input
+                type="text"
+                placeholder="Search posts by title, content, or tags..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+              />
+            </div>
+
+            {/* Sort Dropdown */}
+            <div className="relative">
+              <ArrowUpDown className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={20} />
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as SortOption)}
+                className="pl-10 pr-8 py-2.5 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 text-gray-900 dark:text-white appearance-none cursor-pointer min-w-[160px]"
+              >
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
+                <option value="title-asc">Title (A-Z)</option>
+                <option value="title-desc">Title (Z-A)</option>
+              </select>
+            </div>
+
+            {/* Filter Toggle Button */}
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border transition-colors ${
+                showFilters || selectedTags.length > 0
+                  ? "bg-blue-600 text-white border-blue-600"
+                  : "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800"
+              }`}
+            >
+              <Filter size={20} />
+              <span className="hidden sm:inline">Filters</span>
+              {selectedTags.length > 0 && (
+                <span className="bg-white/20 px-2 py-0.5 rounded-full text-xs font-medium">{selectedTags.length}</span>
+              )}
+            </button>
+
+            {/* Clear Filters Button */}
+            {hasActiveFilters && (
+              <button
+                onClick={clearFilters}
+                className="flex items-center gap-2 px-4 py-2.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+              >
+                <X size={20} />
+                <span className="hidden sm:inline">Clear</span>
+              </button>
+            )}
           </div>
 
-          {/* Filter Toggle Button */}
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border transition-colors ${
-              showFilters || selectedTags.length > 0
-                ? "bg-blue-600 text-white border-blue-600"
-                : "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800"
-            }`}
-          >
-            <Filter size={20} />
-            <span className="hidden sm:inline">Filters</span>
-            {selectedTags.length > 0 && (
-              <span className="bg-white/20 px-2 py-0.5 rounded-full text-xs font-medium">{selectedTags.length}</span>
-            )}
-          </button>
-
-          {/* Clear Filters Button */}
-          {hasActiveFilters && (
-            <button
-              onClick={clearFilters}
-              className="flex items-center gap-2 px-4 py-2.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
-            >
-              <X size={20} />
-              <span className="hidden sm:inline">Clear</span>
-            </button>
+          {/* Tag Filters */}
+          {showFilters && allTags.length > 0 && (
+            <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+              <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Filter by Tags</h3>
+              <div className="flex flex-wrap gap-2">
+                {allTags.map((tag) => (
+                  <button
+                    key={tag}
+                    onClick={() => toggleTag(tag)}
+                    className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+                      selectedTags.includes(tag)
+                        ? "bg-blue-600 text-white shadow-md hover:bg-blue-700"
+                        : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+                    }`}
+                  >
+                    #{tag}
+                  </button>
+                ))}
+              </div>
+            </div>
           )}
         </div>
-
-        {/* Tag Filters */}
-        {showFilters && allTags.length > 0 && (
-          <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-            <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Filter by Tags</h3>
-            <div className="flex flex-wrap gap-2">
-              {allTags.map((tag) => (
-                <button
-                  key={tag}
-                  onClick={() => toggleTag(tag)}
-                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
-                    selectedTags.includes(tag)
-                      ? "bg-blue-600 text-white shadow-md hover:bg-blue-700"
-                      : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
-                  }`}
-                >
-                  #{tag}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Results Count */}
