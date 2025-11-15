@@ -47,7 +47,7 @@ export async function getAllPosts(): Promise<BlogPost[]> {
   );
 
   // Filter out failed posts and sort by date (newest first)
-  return allPostsData.filter((post): post is BlogPost => post !== null).sort((a, b) => (a.date < b.date ? 1 : -1));
+  return allPostsData.filter((post): post is BlogPost => post !== null).sort((a, b) => (a.date > b.date ? 1 : -1));
 }
 
 export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
