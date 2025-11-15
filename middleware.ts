@@ -5,13 +5,27 @@ export function middleware(request: NextRequest) {
   const hostname = request.headers.get('x-forwarded-host') || request.headers.get('host') || '';
   const url = request.nextUrl.clone();
 
-  // Extract subdomain
-  const subdomain = hostname.split('.')[0];
-
-
   // Define supported languages and known languages (that could be requested)
   const availableLanguages = ['german', 'french', 'spanish'];
   const knownLanguages = ['german', 'french', 'spanish', 'italian', 'portuguese', 'dutch', 'russian', 'japanese', 'korean', 'mandarin', 'chinese', 'arabic', 'hindi'];
+
+  // Extract subdomain - handle different URL patterns
+  let subdomain = hostname.split('.')[0];
+
+  // For openpolyglot.org, check if we have a language subdomain
+  if (hostname.includes('openpolyglot.org')) {
+    const parts = hostname.split('.');
+    if (parts.length >= 3) {
+      // e.g., german.openpolyglot.org
+      subdomain = parts[0];
+    } else {
+      // e.g., openpolyglot.org (main domain)
+      subdomain = '';
+    }
+  } else if (hostname.includes('a.run.app')) {
+    // Cloud Run URLs - no language subdomain
+    subdomain = '';
+  }
 
   // Define production domain mapping
   const getBaseDomain = (currentHostname: string): string => {
@@ -33,7 +47,12 @@ export function middleware(request: NextRequest) {
 
   // Check if we're on the main domain
   const baseDomain = getBaseDomain(hostname);
-  const isMainDomain = hostname === baseDomain || hostname === 'localhost:3000' || hostname === 'localhost';
+  const isMainDomain = subdomain === '' ||  // No subdomain extracted
+                       hostname === baseDomain ||
+                       hostname === 'localhost:3000' ||
+                       hostname === 'localhost' ||
+                       hostname.includes('a.run.app') ||  // Treat all Cloud Run URLs as main domain
+                       hostname === 'openpolyglot.org';   // Main production domain
 
 
   if (!isMainDomain) {
