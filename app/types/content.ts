@@ -111,6 +111,27 @@ export interface LessonMetadata {
   lastUpdated: string;
 }
 
+// ============================================================================
+// Audio Playback Types
+// ============================================================================
+
+export interface AudioTimestamp {
+  start: number; // Start time in seconds
+  end: number; // End time in seconds
+  sectionIndex: number; // Which section to highlight
+  sentenceIndex?: number; // Optional sentence-level granularity
+  text?: string; // Optional text snippet for debugging
+}
+
+export interface LessonAudio {
+  enabled: boolean;
+  url?: string; // Optional pre-recorded audio URL
+  useTTS: boolean; // Whether to use text-to-speech
+  language?: string; // Language code for TTS (e.g., 'de-DE', 'fr-FR')
+  voice?: string; // Specific voice name for TTS
+  timestamps?: AudioTimestamp[]; // Timestamp mappings for text sync
+}
+
 export interface LessonContent {
   $schema: string;
   id: string;
@@ -118,6 +139,7 @@ export interface LessonContent {
   type: LessonType;
   sections: ContentSection[];
   metadata: LessonMetadata;
+  audio?: LessonAudio; // Optional audio playback configuration
 }
 
 // ============================================================================

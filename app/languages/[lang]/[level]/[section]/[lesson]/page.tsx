@@ -4,6 +4,7 @@ import { getLessonProgress } from '@/lib/progress';
 import LessonContent from '@/app/components/lessons/LessonContent';
 import LessonNavigation from '@/app/components/lessons/LessonNavigation';
 import MarkCompleteButton from '@/app/components/lessons/MarkCompleteButton';
+import LessonAudioLoader from '@/app/components/lessons/LessonAudioLoader';
 
 interface LessonPageProps {
   params: Promise<{
@@ -58,6 +59,9 @@ export default async function LessonPage({ params }: LessonPageProps) {
 
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
+        {/* Load lesson content into audio player */}
+        <LessonAudioLoader lessonContent={lessonContent} />
+
         {/* Animated background elements */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-blue-500/[0.03] dark:bg-blue-400/[0.05] rounded-full blur-3xl animate-pulse"></div>
