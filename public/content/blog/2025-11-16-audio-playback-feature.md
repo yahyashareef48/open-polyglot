@@ -1,6 +1,6 @@
 ---
 title: "Audio Playback Feature - Listen and Learn with Text-to-Speech"
-date: "2025-01-16"
+date: "2025-11-16"
 author: "Yahya Shareef"
 excerpt: "Introducing comprehensive audio playback with text-to-speech, synchronized text highlighting, voice selection, and speed controls. Now you can listen to lessons while following along visually - perfect for auditory learners and on-the-go studying!"
 tags: ["Audio", "Text-to-Speech", "Accessibility", "Features", "Web Speech API", "User Experience"]
@@ -8,7 +8,7 @@ tags: ["Audio", "Text-to-Speech", "Accessibility", "Features", "Web Speech API",
 
 # Audio Playback Feature - Listen and Learn
 
-**Development Date:** January 16, 2025
+**Development Date:** November 16, 2025
 **Status:** Live and Operational
 **Technology:** Web Speech API, React Context
 
