@@ -34,7 +34,7 @@ export default function SpanishHome() {
             </p>
 
             {/* Coming soon card */}
-            <div className="max-w-2xl mx-auto">
+            <div className="max-w-7xl mx-auto">
               <div className="relative bg-white dark:bg-gray-800 rounded-xl p-10 shadow-lg border-l-4 border-red-600 dark:border-yellow-500 overflow-hidden">
                 <div className="relative">
                   <div className="inline-flex items-center justify-center w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full mb-6">

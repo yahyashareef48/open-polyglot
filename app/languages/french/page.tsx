@@ -34,7 +34,7 @@ export default function FrenchHome() {
             </p>
 
             {/* Coming soon card */}
-            <div className="max-w-2xl mx-auto">
+            <div className="max-w-7xl mx-auto">
               <div className="relative bg-white dark:bg-gray-800 rounded-xl p-10 shadow-lg border-l-4 border-blue-700 dark:border-red-600 overflow-hidden">
                 <div className="relative">
                   <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full mb-6">
