@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { getLevelMetadata, getSectionsForLevel } from '@/lib/content';
+import { getLevelMetadata, getSectionsForLevel, getLanguageMetadata } from '@/lib/content';
 import { getCompletionPercentage } from '@/lib/progress';
 
 interface LevelPageProps {
@@ -9,16 +9,42 @@ interface LevelPageProps {
   }>;
 }
 
+// Define color themes for each language (header only)
+const languageThemes: Record<string, {
+  gradient: string;
+  darkGradient: string;
+}> = {
+  german: {
+    gradient: 'from-black via-[33%] via-red-600 via-[66%] to-amber-500',
+    darkGradient: 'dark:from-gray-900 dark:via-[33%] dark:via-red-900 dark:via-[66%] dark:to-amber-900',
+  },
+  french: {
+    gradient: 'from-blue-700 via-white to-red-600',
+    darkGradient: 'dark:from-blue-900 dark:via-gray-800 dark:to-red-900',
+  },
+  spanish: {
+    gradient: 'from-red-600 via-yellow-400 to-red-600',
+    darkGradient: 'dark:from-red-900 dark:via-yellow-700 dark:to-red-900',
+  },
+};
+
 export default async function LevelPage({ params }: LevelPageProps) {
   const { lang, level } = await params;
 
   try {
     const levelMeta = await getLevelMetadata(lang, level);
     const sections = await getSectionsForLevel(lang, level);
+    const languageMeta = await getLanguageMetadata(lang);
 
     // TODO: Get actual user ID from auth context
     const userId = 'guest';
     const completionPercentage = await getCompletionPercentage(userId, lang, level).catch(() => 0);
+
+    // Get theme for this language or fallback to default
+    const theme = languageThemes[lang] || {
+      gradient: 'from-blue-600 via-purple-600 to-indigo-700',
+      darkGradient: 'dark:from-blue-900 dark:via-purple-900 dark:to-indigo-950',
+    };
 
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
@@ -29,7 +55,7 @@ export default async function LevelPage({ params }: LevelPageProps) {
         </div>
 
         {/* Hero Header */}
-        <div className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 dark:from-blue-900 dark:via-purple-900 dark:to-indigo-950">
+        <div className={`relative overflow-hidden bg-gradient-to-br ${theme.gradient} ${theme.darkGradient}`}>
           <div className="absolute inset-0 bg-black/10"></div>
           <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
 
