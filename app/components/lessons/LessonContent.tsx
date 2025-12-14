@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 /**
  * LessonContent Component
@@ -7,20 +7,19 @@
  * Handles different content section types (text, vocabulary, grammar, etc.)
  */
 
-import { LessonContent as LessonContentType } from '@/app/types/content';
-import { marked } from 'marked';
+import { LessonContent as LessonContentType } from "@/app/types/content";
+import { marked } from "marked";
 
 interface LessonContentProps {
   content: LessonContentType;
 }
 
 export default function LessonContent({ content }: LessonContentProps) {
-
   return (
     <div className="lesson-content">
       {content.sections.map((section, index) => {
         switch (section.type) {
-          case 'text':
+          case "text":
             return (
               <div
                 key={index}
@@ -29,43 +28,34 @@ export default function LessonContent({ content }: LessonContentProps) {
               />
             );
 
-          case 'vocabulary':
+          case "vocabulary":
             return (
               <div key={index} className="my-8">
                 <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6 border-l-4 border-blue-600">
-                  <div
-                    className="prose prose-gray dark:prose-invert max-w-none"
-                    dangerouslySetInnerHTML={{ __html: marked(section.content) }}
-                  />
+                  <div className="prose prose-gray dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: marked(section.content) }} />
                 </div>
               </div>
             );
 
-          case 'grammar':
+          case "grammar":
             return (
               <div key={index} className="my-8">
                 <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-6 border-l-4 border-purple-600">
-                  <div
-                    className="prose prose-gray dark:prose-invert max-w-none"
-                    dangerouslySetInnerHTML={{ __html: marked(section.content) }}
-                  />
+                  <div className="prose prose-gray dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: marked(section.content) }} />
                 </div>
               </div>
             );
 
-          case 'dialogue':
+          case "dialogue":
             return (
               <div key={index} className="my-8">
                 <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-6 border-l-4 border-green-600">
-                  <div
-                    className="prose prose-gray dark:prose-invert max-w-none"
-                    dangerouslySetInnerHTML={{ __html: marked(section.content) }}
-                  />
+                  <div className="prose prose-gray dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: marked(section.content) }} />
                 </div>
               </div>
             );
 
-          case 'audio':
+          case "audio":
             return (
               <div key={index} className="my-8">
                 <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-6">
@@ -76,36 +66,23 @@ export default function LessonContent({ content }: LessonContentProps) {
                     </audio>
                   )}
                   {section.content && (
-                    <div
-                      className="prose prose-gray dark:prose-invert max-w-none"
-                      dangerouslySetInnerHTML={{ __html: marked(section.content) }}
-                    />
+                    <div className="prose prose-gray dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: marked(section.content) }} />
                   )}
                 </div>
               </div>
             );
 
-          case 'video':
+          case "video":
             return (
-              <div key={index} className="my-8">
-                <div>
-                  {section.videoUrl && (
-                    <div className="aspect-video bg-black rounded-lg overflow-hidden mb-4">
-                      <iframe
-                        src={section.videoUrl}
-                        className="w-full h-full"
-                        allowFullScreen
-                        title="Lesson video"
-                      />
-                    </div>
-                  )}
-                  {section.content && (
-                    <div
-                      className="prose prose-gray dark:prose-invert max-w-none"
-                      dangerouslySetInnerHTML={{ __html: marked(section.content) }}
-                    />
-                  )}
-                </div>
+              <div key={index}>
+                {section.videoUrl && (
+                  <div className="aspect-video bg-black w-full">
+                    <iframe src={section.videoUrl} className="w-full h-full" allowFullScreen title="Lesson video" />
+                  </div>
+                )}
+                {section.content && (
+                  <div className="prose prose-gray dark:prose-invert max-w-none mt-8" dangerouslySetInnerHTML={{ __html: marked(section.content) }} />
+                )}
               </div>
             );
 

@@ -6,8 +6,7 @@
   "sections": [
     {
       "type": "video",
-      "videoUrl": "https://www.youtube.com/embed/jta-lr-Dto8",
-      "content": "# Welcome to Open Polyglot! 🦉\n\nWatch this introduction video to get started with your German learning journey!"
+      "videoUrl": "https://www.youtube.com/embed/jta-lr-Dto8"
     },
     {
       "type": "text",
