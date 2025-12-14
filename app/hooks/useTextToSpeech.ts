@@ -204,14 +204,14 @@ export function useTextToSpeech(): UseTextToSpeechReturn {
 
         utterance.onerror = (event) => {
           // Ignore 'interrupted' and 'canceled' errors as they're expected when stopping/changing playback
-          if (event.error === 'interrupted' || event.error === 'canceled') {
+          if (event.error === "interrupted" || event.error === "canceled") {
             return;
           }
 
           // Log other errors for debugging
           if (event.error) {
             // eslint-disable-next-line no-console
-            console.error('Speech synthesis error:', event.error, event);
+            console.error("Speech synthesis error:", event.error, event);
           }
 
           setIsSpeaking(false);
@@ -242,13 +242,13 @@ export function useTextToSpeech(): UseTextToSpeechReturn {
 
   // Resume speech
   const resume = useCallback(() => {
-    if (window.speechSynthesis.paused) {
+    if (isPaused) {
       window.speechSynthesis.resume();
       setIsPaused(false);
       startTimeRef.current = Date.now();
       startTimeTracking();
     }
-  }, [startTimeTracking]);
+  }, [startTimeTracking, isPaused]);
 
   // Stop speech
   const stop = useCallback(() => {
@@ -278,7 +278,6 @@ export function useTextToSpeech(): UseTextToSpeechReturn {
         stop();
         // We would need to re-speak from current position
         // This is a limitation of the Web Speech API
-        console.log("Rate changed to:", rateRef.current);
       }
     },
     [isSpeaking, stop]
