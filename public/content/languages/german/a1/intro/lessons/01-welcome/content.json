@@ -5,6 +5,11 @@
   "type": "informational",
   "sections": [
     {
+      "type": "video",
+      "videoUrl": "https://www.youtube.com/embed/jta-lr-Dto8",
+      "content": "# Welcome to Open Polyglot! 🦉\n\nWatch this introduction video to get started with your German learning journey!"
+    },
+    {
       "type": "text",
       "content": "# Welcome to Open Polyglot! 🦉\n\nWelcome to your German learning journey! We're thrilled to have you here.\n\n## What is Open Polyglot?\n\nOpen Polyglot is a **free, open-source language learning platform** designed to help you master German (and eventually many other languages!) at your own pace. Our approach combines structured lessons, interactive exercises, and real-world resources to give you a comprehensive learning experience.\n\n## Why Open Polyglot?\n\n✨ **Completely Free** - No subscriptions, no hidden costs, just pure learning\n\n🌍 **Open Source** - Built by the community, for the community\n\n📱 **Works Offline** - Progressive Web App that works even without internet\n\n🎯 **Structured Learning** - Follow the CEFR framework from A1 to C2\n\n🧠 **Your Pace** - Learn at a speed that works for you\n\n## How to Use This Platform\n\nThis platform is organized by **CEFR levels** (A1, A2, B1, B2, C1, C2). Each level contains multiple chapters, and each chapter has several lessons. You can:\n\n- Follow the structured curriculum in order\n- Jump to specific topics that interest you\n- Track your progress as you complete lessons\n- Practice with interactive exercises\n- Access external resources to supplement your learning\n\n## Ready to Begin?\n\nIn the next lessons, you'll learn:\n\n- An **action plan** for effective learning\n- **Useful resources** to enhance your studies\n- What to expect at each **CEFR level**\n\nLet's make learning German an enjoyable journey together! 🚀"
     }
