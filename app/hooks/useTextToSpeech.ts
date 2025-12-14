@@ -3,8 +3,8 @@
  * Provides methods to generate speech from text with language and voice control
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import type { AudioTimestamp } from '@/app/types/content';
+import { useState, useEffect, useCallback, useRef } from "react";
+import type { AudioTimestamp } from "@/app/types/content";
 
 export interface TTSOptions {
   language?: string; // e.g., 'de-DE', 'fr-FR', 'es-ES', 'en-US'
@@ -53,7 +53,7 @@ export function useTextToSpeech(): UseTextToSpeechReturn {
 
   // Check for Web Speech API support and load voices
   useEffect(() => {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
       setIsSupported(true);
 
       // Load available voices
@@ -107,111 +107,127 @@ export function useTextToSpeech(): UseTextToSpeechReturn {
   }, []);
 
   // Generate timestamps for sections
-  const generateTimestamps = useCallback((sections: TTSSection[], rate: number): AudioTimestamp[] => {
-    const timestamps: AudioTimestamp[] = [];
-    let currentTime = 0;
+  const generateTimestamps = useCallback(
+    (sections: TTSSection[], rate: number): AudioTimestamp[] => {
+      const timestamps: AudioTimestamp[] = [];
+      let currentTime = 0;
 
-    sections.forEach((section) => {
-      const duration = estimateDuration(section.text, rate);
-      timestamps.push({
-        start: currentTime,
-        end: currentTime + duration,
-        sectionIndex: section.sectionIndex,
-        text: section.text.substring(0, 50) + '...', // First 50 chars for debugging
+      sections.forEach((section) => {
+        const duration = estimateDuration(section.text, rate);
+        timestamps.push({
+          start: currentTime,
+          end: currentTime + duration,
+          sectionIndex: section.sectionIndex,
+          text: section.text.substring(0, 50) + "...", // First 50 chars for debugging
+        });
+        currentTime += duration;
       });
-      currentTime += duration;
-    });
 
-    return timestamps;
-  }, [estimateDuration]);
+      return timestamps;
+    },
+    [estimateDuration]
+  );
 
   // Speak multiple sections
-  const speak = useCallback((sections: TTSSection[], options: TTSOptions = {}) => {
-    if (!isSupported) {
-      console.warn('Text-to-Speech is not supported in this browser');
-      return;
-    }
-
-    // Stop any ongoing speech
-    window.speechSynthesis.cancel();
-    utterancesRef.current = [];
-    currentUtteranceIndexRef.current = 0;
-    accumulatedTimeRef.current = 0;
-    setCurrentTime(0);
-
-    const rate = options.rate ?? rateRef.current;
-    rateRef.current = rate;
-
-    // Generate timestamps
-    const generatedTimestamps = generateTimestamps(sections, rate);
-    setTimestamps(generatedTimestamps);
-
-    // Calculate total duration
-    const totalDur = generatedTimestamps.reduce((sum, ts) => sum + (ts.end - ts.start), 0);
-    setTotalDuration(totalDur);
-
-    // Create utterances for each section
-    sections.forEach((section, index) => {
-      const utterance = new SpeechSynthesisUtterance(section.text);
-
-      // Set language
-      if (options.language) {
-        utterance.lang = options.language;
+  const speak = useCallback(
+    (sections: TTSSection[], options: TTSOptions = {}) => {
+      if (!isSupported) {
+        console.warn("Text-to-Speech is not supported in this browser");
+        return;
       }
 
-      // Set voice
-      if (options.voice && availableVoices.length > 0) {
-        const selectedVoice = availableVoices.find(v => v.name === options.voice);
-        if (selectedVoice) {
-          utterance.voice = selectedVoice;
+      // Stop any ongoing speech
+      window.speechSynthesis.cancel();
+      utterancesRef.current = [];
+      currentUtteranceIndexRef.current = 0;
+      accumulatedTimeRef.current = 0;
+      setCurrentTime(0);
+
+      const rate = options.rate ?? rateRef.current;
+      rateRef.current = rate;
+
+      // Generate timestamps
+      const generatedTimestamps = generateTimestamps(sections, rate);
+      setTimestamps(generatedTimestamps);
+
+      // Calculate total duration
+      const totalDur = generatedTimestamps.reduce((sum, ts) => sum + (ts.end - ts.start), 0);
+      setTotalDuration(totalDur);
+
+      // Create utterances for each section
+      sections.forEach((section, index) => {
+        const utterance = new SpeechSynthesisUtterance(section.text);
+
+        // Set language
+        if (options.language) {
+          utterance.lang = options.language;
         }
-      } else if (options.language && availableVoices.length > 0) {
-        // Auto-select voice based on language
-        const langVoice = availableVoices.find(v => v.lang.startsWith(options.language!));
-        if (langVoice) {
-          utterance.voice = langVoice;
+
+        // Set voice
+        if (options.voice && availableVoices.length > 0) {
+          const selectedVoice = availableVoices.find((v) => v.name === options.voice);
+          if (selectedVoice) {
+            utterance.voice = selectedVoice;
+          }
+        } else if (options.language && availableVoices.length > 0) {
+          // Auto-select voice based on language
+          const langVoice = availableVoices.find((v) => v.lang.startsWith(options.language!));
+          if (langVoice) {
+            utterance.voice = langVoice;
+          }
         }
-      }
 
-      // Set speech parameters
-      utterance.rate = rate;
-      utterance.pitch = options.pitch ?? 1;
-      utterance.volume = options.volume ?? 1;
+        // Set speech parameters
+        utterance.rate = rate;
+        utterance.pitch = options.pitch ?? 1;
+        utterance.volume = options.volume ?? 1;
 
-      // Event handlers
-      utterance.onstart = () => {
-        setIsSpeaking(true);
-        setIsPaused(false);
-        startTimeRef.current = Date.now();
-        startTimeTracking();
-      };
+        // Event handlers
+        utterance.onstart = () => {
+          setIsSpeaking(true);
+          setIsPaused(false);
+          startTimeRef.current = Date.now();
+          startTimeTracking();
+        };
 
-      utterance.onend = () => {
-        accumulatedTimeRef.current += (Date.now() - startTimeRef.current) / 1000;
-        currentUtteranceIndexRef.current++;
+        utterance.onend = () => {
+          accumulatedTimeRef.current += (Date.now() - startTimeRef.current) / 1000;
+          currentUtteranceIndexRef.current++;
 
-        // If this was the last utterance
-        if (currentUtteranceIndexRef.current >= utterancesRef.current.length) {
+          // If this was the last utterance
+          if (currentUtteranceIndexRef.current >= utterancesRef.current.length) {
+            setIsSpeaking(false);
+            stopTimeTracking();
+            setCurrentTime(totalDur);
+          }
+        };
+
+        utterance.onerror = (event) => {
+          // Ignore 'interrupted' and 'canceled' errors as they're expected when stopping/changing playback
+          if (event.error === 'interrupted' || event.error === 'canceled') {
+            return;
+          }
+
+          // Log other errors for debugging
+          if (event.error) {
+            // eslint-disable-next-line no-console
+            console.error('Speech synthesis error:', event.error, event);
+          }
+
           setIsSpeaking(false);
           stopTimeTracking();
-          setCurrentTime(totalDur);
-        }
-      };
+        };
 
-      utterance.onerror = (event) => {
-        console.error('Speech synthesis error:', event);
-        setIsSpeaking(false);
-        stopTimeTracking();
-      };
+        utterancesRef.current.push(utterance);
+      });
 
-      utterancesRef.current.push(utterance);
-    });
-
-    // Start speaking
-    utterancesRef.current.forEach(utterance => {
-      window.speechSynthesis.speak(utterance);
-    });
-  }, [isSupported, availableVoices, generateTimestamps, startTimeTracking, stopTimeTracking]);
+      // Start speaking
+      utterancesRef.current.forEach((utterance) => {
+        window.speechSynthesis.speak(utterance);
+      });
+    },
+    [isSupported, availableVoices, generateTimestamps, startTimeTracking, stopTimeTracking]
+  );
 
   // Pause speech
   const pause = useCallback(() => {
@@ -246,24 +262,27 @@ export function useTextToSpeech(): UseTextToSpeechReturn {
   }, [stopTimeTracking]);
 
   // Change speech rate
-  const setRate = useCallback((rate: number) => {
-    rateRef.current = Math.max(0.5, Math.min(2, rate)); // Clamp between 0.5 and 2
+  const setRate = useCallback(
+    (rate: number) => {
+      rateRef.current = Math.max(0.5, Math.min(2, rate)); // Clamp between 0.5 and 2
 
-    // If currently speaking, need to restart with new rate
-    if (isSpeaking && utterancesRef.current.length > 0) {
-      const currentIndex = currentUtteranceIndexRef.current;
-      const currentSections: TTSSection[] = utterancesRef.current.slice(currentIndex).map((utterance, idx) => ({
-        text: utterance.text,
-        sectionIndex: currentIndex + idx,
-      }));
+      // If currently speaking, need to restart with new rate
+      if (isSpeaking && utterancesRef.current.length > 0) {
+        const currentIndex = currentUtteranceIndexRef.current;
+        const currentSections: TTSSection[] = utterancesRef.current.slice(currentIndex).map((utterance, idx) => ({
+          text: utterance.text,
+          sectionIndex: currentIndex + idx,
+        }));
 
-      // Restart from current position with new rate
-      stop();
-      // We would need to re-speak from current position
-      // This is a limitation of the Web Speech API
-      console.log('Rate changed to:', rateRef.current);
-    }
-  }, [isSpeaking, stop]);
+        // Restart from current position with new rate
+        stop();
+        // We would need to re-speak from current position
+        // This is a limitation of the Web Speech API
+        console.log("Rate changed to:", rateRef.current);
+      }
+    },
+    [isSpeaking, stop]
+  );
 
   return {
     speak,
