@@ -5,47 +5,16 @@
  *
  * Renders lesson content with support for markdown formatting.
  * Handles different content section types (text, vocabulary, grammar, etc.)
- * Supports audio playback text highlighting
  */
 
 import { LessonContent as LessonContentType } from '@/app/types/content';
 import { marked } from 'marked';
-import { useAudioPlayer } from '@/app/contexts/AudioPlayerContext';
-import { useEffect, useRef } from 'react';
 
 interface LessonContentProps {
   content: LessonContentType;
 }
 
 export default function LessonContent({ content }: LessonContentProps) {
-  const audioPlayer = useAudioPlayer();
-  const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
-
-  // Auto-scroll to highlighted section
-  useEffect(() => {
-    if (audioPlayer.highlightedSectionIndex >= 0) {
-      const sectionElement = sectionRefs.current[audioPlayer.highlightedSectionIndex];
-      if (sectionElement) {
-        sectionElement.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center',
-        });
-      }
-    }
-  }, [audioPlayer.highlightedSectionIndex]);
-
-  // Helper function to determine if section is highlighted
-  const isHighlighted = (index: number) => {
-    return audioPlayer.highlightedSectionIndex === index;
-  };
-
-  // Helper function to get highlight classes
-  const getHighlightClasses = (index: number) => {
-    if (isHighlighted(index)) {
-      return 'ring-2 ring-amber-400 dark:ring-amber-500 bg-amber-50/50 dark:bg-amber-900/20 transition-all duration-300';
-    }
-    return 'transition-all duration-300';
-  };
 
   return (
     <div className="lesson-content">
@@ -55,16 +24,15 @@ export default function LessonContent({ content }: LessonContentProps) {
             return (
               <div
                 key={index}
-                ref={(el) => (sectionRefs.current[index] = el)}
-                className={`prose prose-gray dark:prose-invert max-w-none rounded-lg p-4 -m-4 ${getHighlightClasses(index)}`}
+                className="prose prose-gray dark:prose-invert max-w-none"
                 dangerouslySetInnerHTML={{ __html: marked(section.content) }}
               />
             );
 
           case 'vocabulary':
             return (
-              <div key={index} className="my-8" ref={(el) => (sectionRefs.current[index] = el)}>
-                <div className={`bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6 border-l-4 border-blue-600 ${getHighlightClasses(index)}`}>
+              <div key={index} className="my-8">
+                <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6 border-l-4 border-blue-600">
                   <div
                     className="prose prose-gray dark:prose-invert max-w-none"
                     dangerouslySetInnerHTML={{ __html: marked(section.content) }}
@@ -75,8 +43,8 @@ export default function LessonContent({ content }: LessonContentProps) {
 
           case 'grammar':
             return (
-              <div key={index} className="my-8" ref={(el) => (sectionRefs.current[index] = el)}>
-                <div className={`bg-purple-50 dark:bg-purple-900/20 rounded-lg p-6 border-l-4 border-purple-600 ${getHighlightClasses(index)}`}>
+              <div key={index} className="my-8">
+                <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-6 border-l-4 border-purple-600">
                   <div
                     className="prose prose-gray dark:prose-invert max-w-none"
                     dangerouslySetInnerHTML={{ __html: marked(section.content) }}
@@ -87,8 +55,8 @@ export default function LessonContent({ content }: LessonContentProps) {
 
           case 'dialogue':
             return (
-              <div key={index} className="my-8" ref={(el) => (sectionRefs.current[index] = el)}>
-                <div className={`bg-green-50 dark:bg-green-900/20 rounded-lg p-6 border-l-4 border-green-600 ${getHighlightClasses(index)}`}>
+              <div key={index} className="my-8">
+                <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-6 border-l-4 border-green-600">
                   <div
                     className="prose prose-gray dark:prose-invert max-w-none"
                     dangerouslySetInnerHTML={{ __html: marked(section.content) }}
@@ -99,8 +67,8 @@ export default function LessonContent({ content }: LessonContentProps) {
 
           case 'audio':
             return (
-              <div key={index} className="my-8" ref={(el) => (sectionRefs.current[index] = el)}>
-                <div className={`bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-6 ${getHighlightClasses(index)}`}>
+              <div key={index} className="my-8">
+                <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-6">
                   {section.audioUrl && (
                     <audio controls className="w-full mb-4">
                       <source src={section.audioUrl} type="audio/mpeg" />
@@ -119,8 +87,8 @@ export default function LessonContent({ content }: LessonContentProps) {
 
           case 'video':
             return (
-              <div key={index} className="my-8" ref={(el) => (sectionRefs.current[index] = el)}>
-                <div className={getHighlightClasses(index)}>
+              <div key={index} className="my-8">
+                <div>
                   {section.videoUrl && (
                     <div className="aspect-video bg-black rounded-lg overflow-hidden mb-4">
                       <iframe
@@ -145,8 +113,7 @@ export default function LessonContent({ content }: LessonContentProps) {
             return (
               <div
                 key={index}
-                ref={(el) => (sectionRefs.current[index] = el)}
-                className={`prose prose-gray dark:prose-invert max-w-none rounded-lg p-4 -m-4 ${getHighlightClasses(index)}`}
+                className="prose prose-gray dark:prose-invert max-w-none"
                 dangerouslySetInnerHTML={{ __html: marked(section.content) }}
               />
             );

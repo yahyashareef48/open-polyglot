@@ -26,10 +26,6 @@ export interface AudioPlayerState {
   currentTime: number;
   totalDuration: number;
 
-  // Text highlighting
-  currentSectionIndex: number;
-  highlightedSectionIndex: number;
-
   // UI state
   isMinimized: boolean;
   isLoading: boolean;
@@ -93,7 +89,6 @@ export function AudioPlayerProvider({ children }: AudioPlayerProviderProps) {
   const [playbackSpeed, setPlaybackSpeedState] = useState<PlaybackSpeed>(1);
   const [isMinimized, setIsMinimized] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [highlightedSectionIndex, setHighlightedSectionIndex] = useState(-1);
   const [selectedVoice, setSelectedVoice] = useState<SpeechSynthesisVoice | null>(null);
 
   // Load saved voice preference on mount
@@ -108,11 +103,6 @@ export function AudioPlayerProvider({ children }: AudioPlayerProviderProps) {
       }
     }
   }, [tts.availableVoices, selectedVoice]);
-
-  // Sync highlighted section with TTS current section
-  useEffect(() => {
-    setHighlightedSectionIndex(tts.currentSectionIndex);
-  }, [tts.currentSectionIndex]);
 
   // Persist playback position in localStorage
   useEffect(() => {
@@ -152,7 +142,6 @@ export function AudioPlayerProvider({ children }: AudioPlayerProviderProps) {
   const clearLesson = useCallback(() => {
     tts.stop();
     setLessonContent(null);
-    setHighlightedSectionIndex(-1);
   }, [tts]);
 
   // Play
@@ -203,7 +192,6 @@ export function AudioPlayerProvider({ children }: AudioPlayerProviderProps) {
   // Stop
   const stop = useCallback(() => {
     tts.stop();
-    setHighlightedSectionIndex(-1);
   }, [tts]);
 
   // Toggle play/pause
@@ -273,8 +261,6 @@ export function AudioPlayerProvider({ children }: AudioPlayerProviderProps) {
     playbackSpeed,
     currentTime: tts.currentTime,
     totalDuration: tts.totalDuration,
-    currentSectionIndex: tts.currentSectionIndex,
-    highlightedSectionIndex,
     isMinimized,
     isLoading,
     timestamps: tts.timestamps,

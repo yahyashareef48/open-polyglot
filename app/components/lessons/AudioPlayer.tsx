@@ -145,14 +145,6 @@ export function AudioPlayer() {
               onSpeedChange={audioPlayer.setPlaybackSpeed}
               onToggleMinimize={audioPlayer.toggleMinimize}
             />
-
-            {/* Current section indicator */}
-            {audioPlayer.isPlaying && audioPlayer.currentSectionIndex >= 0 && (
-              <div className="text-xs text-emerald-600 dark:text-emerald-400 font-medium text-center animate-pulse">
-                Reading section {audioPlayer.currentSectionIndex + 1} of{' '}
-                {lesson.sections.length}
-              </div>
-            )}
           </div>
         )}
       </div>

@@ -28,7 +28,6 @@ export interface UseTextToSpeechReturn {
   isPaused: boolean;
   isSpeaking: boolean;
   isSupported: boolean;
-  currentSectionIndex: number;
   currentTime: number; // Estimated current time in seconds
   totalDuration: number; // Estimated total duration in seconds
   timestamps: AudioTimestamp[];
@@ -39,7 +38,6 @@ export function useTextToSpeech(): UseTextToSpeechReturn {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [isSupported, setIsSupported] = useState(false);
-  const [currentSectionIndex, setCurrentSectionIndex] = useState(-1);
   const [currentTime, setCurrentTime] = useState(0);
   const [totalDuration, setTotalDuration] = useState(0);
   const [timestamps, setTimestamps] = useState<AudioTimestamp[]>([]);
@@ -182,7 +180,6 @@ export function useTextToSpeech(): UseTextToSpeechReturn {
 
       // Event handlers
       utterance.onstart = () => {
-        setCurrentSectionIndex(section.sectionIndex);
         setIsSpeaking(true);
         setIsPaused(false);
         startTimeRef.current = Date.now();
@@ -196,7 +193,6 @@ export function useTextToSpeech(): UseTextToSpeechReturn {
         // If this was the last utterance
         if (currentUtteranceIndexRef.current >= utterancesRef.current.length) {
           setIsSpeaking(false);
-          setCurrentSectionIndex(-1);
           stopTimeTracking();
           setCurrentTime(totalDur);
         }
@@ -205,7 +201,6 @@ export function useTextToSpeech(): UseTextToSpeechReturn {
       utterance.onerror = (event) => {
         console.error('Speech synthesis error:', event);
         setIsSpeaking(false);
-        setCurrentSectionIndex(-1);
         stopTimeTracking();
       };
 
@@ -244,7 +239,6 @@ export function useTextToSpeech(): UseTextToSpeechReturn {
     window.speechSynthesis.cancel();
     setIsSpeaking(false);
     setIsPaused(false);
-    setCurrentSectionIndex(-1);
     setCurrentTime(0);
     currentUtteranceIndexRef.current = 0;
     accumulatedTimeRef.current = 0;
@@ -280,7 +274,6 @@ export function useTextToSpeech(): UseTextToSpeechReturn {
     isPaused,
     isSpeaking,
     isSupported,
-    currentSectionIndex,
     currentTime,
     totalDuration,
     timestamps,
