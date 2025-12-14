@@ -83,12 +83,12 @@ export function useTextToSpeech(): UseTextToSpeechReturn {
     }
 
     intervalRef.current = setInterval(() => {
-      if (!isPaused && isSpeaking) {
-        const elapsed = (Date.now() - startTimeRef.current) / 1000;
-        setCurrentTime(accumulatedTimeRef.current + elapsed);
-      }
+      const now = Date.now();
+      const elapsed = (now - startTimeRef.current) / 1000;
+      const newTime = accumulatedTimeRef.current + elapsed;
+      setCurrentTime(newTime);
     }, 100); // Update every 100ms for smooth progress
-  }, [isPaused, isSpeaking]);
+  }, []);
 
   // Stop time tracking
   const stopTimeTracking = useCallback(() => {

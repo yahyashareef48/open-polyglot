@@ -25,8 +25,8 @@ interface AudioControlsProps {
   isMinimized: boolean;
   onPlayPause: () => void;
   onStop: () => void;
-  onSkipForward: () => void;
-  onSkipBackward: () => void;
+  onSkipForward: (seconds?: number) => void;
+  onSkipBackward: (seconds?: number) => void;
   onSpeedChange: (speed: PlaybackSpeed) => void;
   onToggleMinimize: () => void;
   className?: string;
@@ -78,7 +78,7 @@ export function AudioControls({
         <>
           {/* Skip Backward */}
           <button
-            onClick={onSkipBackward}
+            onClick={() => onSkipBackward(10)}
             className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             title="Skip backward 10s"
             aria-label="Skip backward 10 seconds"
@@ -103,7 +103,7 @@ export function AudioControls({
 
           {/* Skip Forward */}
           <button
-            onClick={onSkipForward}
+            onClick={() => onSkipForward(10)}
             className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             title="Skip forward 10s"
             aria-label="Skip forward 10 seconds"

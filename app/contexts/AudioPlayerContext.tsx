@@ -210,18 +210,34 @@ export function AudioPlayerProvider({ children }: AudioPlayerProviderProps) {
   }, [lessonContent, tts.isSpeaking, tts.isPaused, play, pause, resume]);
 
   // Skip forward
-  const skipForward = useCallback((seconds: number = 10) => {
-    // Web Speech API doesn't support seeking, so we'll need to restart from a specific section
-    // For now, just log the intention
-    console.log("Skip forward:", seconds, "seconds");
+  const skipForward = useCallback((seconds?: number) => {
+    const skipAmount = seconds ?? 10;
+    // eslint-disable-next-line no-console
+    console.log("[AudioPlayer] skipForward called", {
+      seconds: skipAmount,
+      currentTime: tts.currentTime,
+      totalDuration: tts.totalDuration,
+      isSpeaking: tts.isSpeaking,
+      isPaused: tts.isPaused,
+      timestampsCount: tts.timestamps.length
+    });
     // TODO: Implement section-based skipping
-  }, []);
+  }, [tts.currentTime, tts.totalDuration, tts.isSpeaking, tts.isPaused, tts.timestamps]);
 
   // Skip backward
-  const skipBackward = useCallback((seconds: number = 10) => {
-    console.log("Skip backward:", seconds, "seconds");
+  const skipBackward = useCallback((seconds?: number) => {
+    const skipAmount = seconds ?? 10;
+    // eslint-disable-next-line no-console
+    console.log("[AudioPlayer] skipBackward called", {
+      seconds: skipAmount,
+      currentTime: tts.currentTime,
+      totalDuration: tts.totalDuration,
+      isSpeaking: tts.isSpeaking,
+      isPaused: tts.isPaused,
+      timestampsCount: tts.timestamps.length
+    });
     // TODO: Implement section-based skipping
-  }, []);
+  }, [tts.currentTime, tts.totalDuration, tts.isSpeaking, tts.isPaused, tts.timestamps]);
 
   // Set playback speed
   const setPlaybackSpeed = useCallback(
