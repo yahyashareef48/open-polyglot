@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { getSectionMetadata, getLevelMetadata } from '@/lib/content';
-import { getSectionProgress } from '@/lib/progress';
+import ProgressCircle from '@/app/components/progress/ProgressCircle';
 
 interface SectionPageProps {
   params: Promise<{
@@ -42,9 +42,7 @@ export default async function SectionPage({ params }: SectionPageProps) {
 
     // TODO: Get actual user ID from auth context
     const userId = 'guest';
-    const sectionProgress = await getSectionProgress(userId, lang, level, section).catch(() => null);
-
-    const completionPercentage = sectionProgress?.percentComplete ?? 0;
+    const totalLessons = sectionMeta.lessons.length;
 
     // Get theme for this language or fallback to default
     const theme = languageThemes[lang] || {
@@ -98,51 +96,18 @@ export default async function SectionPage({ params }: SectionPageProps) {
                     </div>
                   </div>
 
-                  {sectionProgress && (
-                    <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm px-4 py-3 rounded-xl">
-                      <svg className="w-6 h-6 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      <div>
-                        <div className="text-2xl font-bold text-white">{sectionProgress.completedLessons}/{sectionMeta.lessons.length}</div>
-                        <div className="text-xs text-white/70">Completed</div>
-                      </div>
-                    </div>
-                  )}
                 </div>
               </div>
 
               {/* Progress Circle */}
               <div className="flex flex-col items-center md:items-end">
-                <div className="relative w-32 h-32">
-                  <svg className="w-full h-full transform -rotate-90">
-                    <circle
-                      cx="64"
-                      cy="64"
-                      r="56"
-                      stroke="currentColor"
-                      strokeWidth="8"
-                      fill="none"
-                      className="text-white/20"
-                    />
-                    <circle
-                      cx="64"
-                      cy="64"
-                      r="56"
-                      stroke="currentColor"
-                      strokeWidth="8"
-                      fill="none"
-                      strokeDasharray={`${2 * Math.PI * 56}`}
-                      strokeDashoffset={`${2 * Math.PI * 56 * (1 - completionPercentage / 100)}`}
-                      className="text-emerald-400 transition-all duration-1000 ease-out"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-3xl font-bold text-white">{Math.round(completionPercentage)}%</span>
-                    <span className="text-xs text-white/70">Complete</span>
-                  </div>
-                </div>
+                <ProgressCircle
+                  userId={userId}
+                  languageCode={lang}
+                  levelId={level}
+                  sectionId={section}
+                  totalLessons={totalLessons}
+                />
               </div>
             </div>
           </div>
