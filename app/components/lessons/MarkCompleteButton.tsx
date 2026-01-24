@@ -1,13 +1,7 @@
 'use client';
 
-/**
- * MarkCompleteButton Component
- *
- * Client-side button to mark a lesson as complete
- */
-
-import { useState } from 'react';
-import { markLessonComplete } from '@/lib/progress';
+import { useState, useEffect } from 'react';
+import { markLessonComplete, getLessonProgress } from '@/lib/progress';
 
 interface MarkCompleteButtonProps {
   userId: string;
@@ -26,6 +20,13 @@ export default function MarkCompleteButton({
 }: MarkCompleteButtonProps) {
   const [isCompleting, setIsCompleting] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    getLessonProgress(userId, languageCode, levelId, sectionId, lessonId)
+      .then((progress) => setIsCompleted(progress?.completed ?? false))
+      .finally(() => setIsLoading(false));
+  }, [userId, languageCode, levelId, sectionId, lessonId]);
 
   const handleMarkComplete = async () => {
     setIsCompleting(true);
@@ -45,6 +46,8 @@ export default function MarkCompleteButton({
       setIsCompleting(false);
     }
   };
+
+  if (isLoading) return null;
 
   if (isCompleted) {
     return (
