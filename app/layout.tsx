@@ -10,6 +10,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://openpolyglot.org"),
   title: "Open Polyglot - Learn Languages for Free",
   description:
     "The free, open-source language learning platform. Learn German, French, Spanish and more without expensive courses. Structured A1-B2 curriculum with games and AI pronunciation help.",
