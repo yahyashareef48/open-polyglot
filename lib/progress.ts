@@ -1,32 +1,30 @@
 /**
- * Progress tracking utilities for Open Polyglot
- *
- * Uses IndexedDB for persistent storage of user progress.
- * Falls back to localStorage if IndexedDB is not available.
+ * Progress tracking for Open Polyglot
+ * Uses IndexedDB with localStorage fallback
  */
 
-import {
-  UserProgress,
-  LevelProgress,
-  SectionProgress,
-  LessonProgress,
-} from '@/app/types/content';
+import { User, LevelProgress, Session } from '@/app/types/content';
 
 const DB_NAME = 'OpenPolyglotDB';
-const DB_VERSION = 1;
-const PROGRESS_STORE = 'progress';
-const FALLBACK_KEY_PREFIX = 'open-polyglot-progress-';
+const DB_VERSION = 2;
+const STORES = {
+  users: 'users',
+  userLanguages: 'user_languages',
+  levelProgress: 'level_progress',
+  sessions: 'sessions',
+} as const;
 
-// ============================================================================
-// IndexedDB Setup
-// ============================================================================
+let dbInstance: IDBDatabase | null = null;
 
-/**
- * Initialize IndexedDB
- */
-function initializeDB(): Promise<IDBDatabase> {
+function isServer(): boolean {
+  return typeof window === 'undefined';
+}
+
+function getDB(): Promise<IDBDatabase> {
+  if (dbInstance) return Promise.resolve(dbInstance);
+
   return new Promise((resolve, reject) => {
-    if (typeof window === 'undefined' || !window.indexedDB) {
+    if (isServer() || !window.indexedDB) {
       reject(new Error('IndexedDB not available'));
       return;
     }
@@ -34,468 +32,295 @@ function initializeDB(): Promise<IDBDatabase> {
     const request = indexedDB.open(DB_NAME, DB_VERSION);
 
     request.onerror = () => reject(request.error);
-    request.onsuccess = () => resolve(request.result);
+    request.onsuccess = () => {
+      dbInstance = request.result;
+      resolve(request.result);
+    };
 
     request.onupgradeneeded = (event) => {
       const db = (event.target as IDBOpenDBRequest).result;
 
-      // Create progress object store if it doesn't exist
-      if (!db.objectStoreNames.contains(PROGRESS_STORE)) {
-        const objectStore = db.createObjectStore(PROGRESS_STORE, { keyPath: 'userId' });
-        objectStore.createIndex('languageCode', 'languageCode', { unique: false });
-        objectStore.createIndex('lastActive', 'lastActive', { unique: false });
+      if (!db.objectStoreNames.contains(STORES.users)) {
+        db.createObjectStore(STORES.users, { keyPath: 'userId' });
+      }
+      if (!db.objectStoreNames.contains(STORES.userLanguages)) {
+        const store = db.createObjectStore(STORES.userLanguages, { keyPath: 'id' });
+        store.createIndex('userId', 'userId', { unique: false });
+      }
+      if (!db.objectStoreNames.contains(STORES.levelProgress)) {
+        const store = db.createObjectStore(STORES.levelProgress, { keyPath: 'id' });
+        store.createIndex('userId', 'userId', { unique: false });
+      }
+      if (!db.objectStoreNames.contains(STORES.sessions)) {
+        const store = db.createObjectStore(STORES.sessions, { keyPath: 'id' });
+        store.createIndex('userId', 'userId', { unique: false });
       }
     };
   });
 }
 
-// ============================================================================
-// IndexedDB Operations
-// ============================================================================
-
-/**
- * Save progress to IndexedDB
- */
-async function saveToIndexedDB(progress: UserProgress): Promise<void> {
-  const db = await initializeDB();
-
+async function dbGet<T>(store: string, key: string): Promise<T | null> {
+  const db = await getDB();
   return new Promise((resolve, reject) => {
-    const transaction = db.transaction([PROGRESS_STORE], 'readwrite');
-    const objectStore = transaction.objectStore(PROGRESS_STORE);
-    const request = objectStore.put(progress);
-
-    request.onsuccess = () => resolve();
-    request.onerror = () => reject(request.error);
+    const tx = db.transaction(store, 'readonly');
+    const req = tx.objectStore(store).get(key);
+    req.onsuccess = () => resolve(req.result || null);
+    req.onerror = () => reject(req.error);
   });
 }
 
-/**
- * Load progress from IndexedDB
- */
-async function loadFromIndexedDB(userId: string): Promise<UserProgress | null> {
-  const db = await initializeDB();
-
+async function dbPut<T>(store: string, data: T): Promise<void> {
+  const db = await getDB();
   return new Promise((resolve, reject) => {
-    const transaction = db.transaction([PROGRESS_STORE], 'readonly');
-    const objectStore = transaction.objectStore(PROGRESS_STORE);
-    const request = objectStore.get(userId);
-
-    request.onsuccess = () => resolve(request.result || null);
-    request.onerror = () => reject(request.error);
+    const tx = db.transaction(store, 'readwrite');
+    const req = tx.objectStore(store).put(data);
+    req.onsuccess = () => resolve();
+    req.onerror = () => reject(req.error);
   });
 }
 
 // ============================================================================
-// LocalStorage Fallback
+// User functions
 // ============================================================================
 
-/**
- * Save progress to localStorage (fallback)
- */
-function saveToLocalStorage(progress: UserProgress): void {
-  if (typeof window === 'undefined') return;
-
-  const key = `${FALLBACK_KEY_PREFIX}${progress.userId}`;
-  localStorage.setItem(key, JSON.stringify(progress));
-}
-
-/**
- * Load progress from localStorage (fallback)
- */
-function loadFromLocalStorage(userId: string): UserProgress | null {
-  if (typeof window === 'undefined') return null;
-
-  const key = `${FALLBACK_KEY_PREFIX}${userId}`;
-  const data = localStorage.getItem(key);
-
-  if (!data) return null;
+async function getOrCreateUser(userId: string): Promise<User> {
+  if (isServer()) {
+    return { userId, createdAt: '', lastActive: '', streak: 0, totalTimeSpent: 0 };
+  }
 
   try {
-    return JSON.parse(data);
-  } catch (error) {
-    console.error('Failed to parse progress from localStorage:', error);
+    let user = await dbGet<User>(STORES.users, userId);
+    if (!user) {
+      const now = new Date().toISOString();
+      user = { userId, createdAt: now, lastActive: now, streak: 0, totalTimeSpent: 0 };
+      await dbPut(STORES.users, user);
+    }
+    return user;
+  } catch {
+    return { userId, createdAt: '', lastActive: '', streak: 0, totalTimeSpent: 0 };
+  }
+}
+
+function updateStreak(user: User): void {
+  const now = new Date();
+  const lastActive = new Date(user.lastActive);
+  const daysDiff = Math.floor((now.getTime() - lastActive.getTime()) / (1000 * 60 * 60 * 24));
+
+  if (daysDiff === 1) {
+    user.streak++;
+  } else if (daysDiff > 1) {
+    user.streak = 1;
+  }
+  user.lastActive = now.toISOString();
+}
+
+// ============================================================================
+// Level Progress functions
+// ============================================================================
+
+function makeLevelKey(userId: string, lang: string, level: string): string {
+  return `${userId}:${lang}:${level}`;
+}
+
+async function getLevelProgressRecord(
+  userId: string,
+  lang: string,
+  level: string
+): Promise<LevelProgress | null> {
+  if (isServer()) return null;
+
+  try {
+    return await dbGet<LevelProgress>(STORES.levelProgress, makeLevelKey(userId, lang, level));
+  } catch {
     return null;
   }
+}
+
+async function getOrCreateLevelProgress(
+  userId: string,
+  lang: string,
+  level: string
+): Promise<LevelProgress> {
+  const existing = await getLevelProgressRecord(userId, lang, level);
+  if (existing) return existing;
+
+  const record: LevelProgress = {
+    id: makeLevelKey(userId, lang, level),
+    userId,
+    languageCode: lang,
+    levelId: level,
+    completedLessons: [],
+    totalLessons: 0,
+    completed: false,
+  };
+
+  try {
+    await dbPut(STORES.levelProgress, record);
+  } catch {
+    // Ignore save errors
+  }
+
+  return record;
 }
 
 // ============================================================================
 // Public API
 // ============================================================================
 
-/**
- * Initialize progress for a new user
- */
-export function createUserProgress(
-  userId: string,
-  languageCode: string,
-  startLevel: string = 'a1'
-): UserProgress {
-  const now = new Date().toISOString();
-
-  return {
-    userId,
-    languageCode,
-    currentLevel: startLevel,
-    levels: [],
-    totalTimeSpent: 0,
-    streak: 0,
-    lastActive: now,
-    createdAt: now,
-    updatedAt: now,
-  };
-}
-
-/**
- * Save user progress
- */
-export async function saveProgress(progress: UserProgress): Promise<void> {
-  progress.updatedAt = new Date().toISOString();
-
-  try {
-    await saveToIndexedDB(progress);
-  } catch (error) {
-    console.warn('IndexedDB save failed, falling back to localStorage:', error);
-    saveToLocalStorage(progress);
-  }
-}
-
-/**
- * Load user progress
- */
-export async function loadProgress(userId: string): Promise<UserProgress | null> {
-  // Return null on server - progress is client-side only
-  if (typeof window === 'undefined') {
-    return null;
-  }
-
-  try {
-    return await loadFromIndexedDB(userId);
-  } catch (error) {
-    console.warn('IndexedDB load failed, falling back to localStorage:', error);
-    return loadFromLocalStorage(userId);
-  }
-}
-
-/**
- * Get or create user progress
- */
-export async function getOrCreateProgress(
-  userId: string,
-  languageCode: string
-): Promise<UserProgress> {
-  const existing = await loadProgress(userId);
-
-  if (existing) {
-    return existing;
-  }
-
-  const newProgress = createUserProgress(userId, languageCode);
-  await saveProgress(newProgress);
-  return newProgress;
-}
-
-// ============================================================================
-// Lesson Progress Functions
-// ============================================================================
-
-/**
- * Mark a lesson as complete
- */
 export async function markLessonComplete(
   userId: string,
   languageCode: string,
   levelId: string,
   sectionId: string,
-  lessonId: string,
-  score?: number,
-  timeSpent?: number
+  lessonId: string
 ): Promise<void> {
-  const progress = await getOrCreateProgress(userId, languageCode);
+  if (isServer()) return;
 
-  // Find or create level progress
-  let levelProgress = progress.levels.find(l => l.levelId === levelId);
-  if (!levelProgress) {
-    levelProgress = {
-      levelId,
-      currentSection: sectionId,
-      currentLesson: lessonId,
-      sections: [],
-      overallProgress: 0,
-    };
-    progress.levels.push(levelProgress);
+  try {
+    const lessonKey = `${sectionId}/${lessonId}`;
+    const progress = await getOrCreateLevelProgress(userId, languageCode, levelId);
+
+    if (!progress.completedLessons.includes(lessonKey)) {
+      progress.completedLessons.push(lessonKey);
+    }
+
+    await dbPut(STORES.levelProgress, progress);
+
+    const user = await getOrCreateUser(userId);
+    updateStreak(user);
+    await dbPut(STORES.users, user);
+  } catch (error) {
+    console.warn('Failed to mark lesson complete:', error);
   }
-
-  // Find or create section progress
-  let sectionProgress = levelProgress.sections.find(s => s.sectionId === sectionId);
-  if (!sectionProgress) {
-    sectionProgress = {
-      sectionId,
-      completedLessons: 0,
-      totalLessons: 0,
-      percentComplete: 0,
-      lessons: [],
-    };
-    levelProgress.sections.push(sectionProgress);
-  }
-
-  // Find or create lesson progress
-  let lessonProgress = sectionProgress.lessons.find(l => l.lessonId === lessonId);
-  if (!lessonProgress) {
-    lessonProgress = {
-      lessonId,
-      completed: false,
-    };
-    sectionProgress.lessons.push(lessonProgress);
-    sectionProgress.totalLessons++;
-  }
-
-  // Update lesson progress
-  if (!lessonProgress.completed) {
-    lessonProgress.completed = true;
-    lessonProgress.completedAt = new Date().toISOString();
-    sectionProgress.completedLessons++;
-  }
-
-  if (score !== undefined) {
-    lessonProgress.score = score;
-  }
-
-  if (timeSpent !== undefined) {
-    lessonProgress.timeSpent = timeSpent;
-    progress.totalTimeSpent += timeSpent;
-  }
-
-  // Update section progress percentage
-  sectionProgress.percentComplete = (sectionProgress.completedLessons / sectionProgress.totalLessons) * 100;
-
-  // Update level progress percentage
-  const totalSectionProgress = levelProgress.sections.reduce(
-    (sum, section) => sum + section.percentComplete,
-    0
-  );
-  levelProgress.overallProgress = totalSectionProgress / levelProgress.sections.length;
-
-  // Update current position
-  levelProgress.currentSection = sectionId;
-  levelProgress.currentLesson = lessonId;
-
-  // Update streak
-  updateStreak(progress);
-
-  await saveProgress(progress);
 }
 
-/**
- * Get progress for a specific lesson
- */
 export async function getLessonProgress(
   userId: string,
   languageCode: string,
   levelId: string,
   sectionId: string,
   lessonId: string
-): Promise<LessonProgress | null> {
-  const progress = await loadProgress(userId);
-  if (!progress) return null;
+): Promise<{ completed: boolean } | null> {
+  if (isServer()) return null;
 
-  const levelProgress = progress.levels.find(l => l.levelId === levelId);
-  if (!levelProgress) return null;
+  try {
+    const progress = await getLevelProgressRecord(userId, languageCode, levelId);
+    if (!progress) return null;
 
-  const sectionProgress = levelProgress.sections.find(s => s.sectionId === sectionId);
-  if (!sectionProgress) return null;
-
-  return sectionProgress.lessons.find(l => l.lessonId === lessonId) || null;
+    const lessonKey = `${sectionId}/${lessonId}`;
+    return { completed: progress.completedLessons.includes(lessonKey) };
+  } catch {
+    return null;
+  }
 }
 
-/**
- * Check if a lesson is completed
- */
-export async function isLessonCompleted(
-  userId: string,
-  languageCode: string,
-  levelId: string,
-  sectionId: string,
-  lessonId: string
-): Promise<boolean> {
-  const lessonProgress = await getLessonProgress(userId, languageCode, levelId, sectionId, lessonId);
-  return lessonProgress?.completed ?? false;
-}
-
-/**
- * Get current lesson for user
- */
-export async function getCurrentLesson(
-  userId: string,
-  languageCode: string
-): Promise<{ levelId: string; sectionId: string; lessonId: string } | null> {
-  const progress = await loadProgress(userId);
-  if (!progress || progress.levels.length === 0) return null;
-
-  const currentLevel = progress.levels.find(l => l.levelId === progress.currentLevel);
-  if (!currentLevel) return null;
-
-  return {
-    levelId: currentLevel.levelId,
-    sectionId: currentLevel.currentSection,
-    lessonId: currentLevel.currentLesson,
-  };
-}
-
-// ============================================================================
-// Section and Level Progress Functions
-// ============================================================================
-
-/**
- * Get section progress
- */
 export async function getSectionProgress(
   userId: string,
   languageCode: string,
   levelId: string,
   sectionId: string
-): Promise<SectionProgress | null> {
-  const progress = await loadProgress(userId);
-  if (!progress) return null;
+): Promise<{ completedLessons: number; percentComplete: number } | null> {
+  if (isServer()) return null;
 
-  const levelProgress = progress.levels.find(l => l.levelId === levelId);
-  if (!levelProgress) return null;
+  try {
+    const progress = await getLevelProgressRecord(userId, languageCode, levelId);
+    if (!progress) return null;
 
-  return levelProgress.sections.find(s => s.sectionId === sectionId) || null;
+    const sectionLessons = progress.completedLessons.filter(
+      (key) => key.startsWith(`${sectionId}/`)
+    );
+
+    return {
+      completedLessons: sectionLessons.length,
+      percentComplete: progress.totalLessons > 0
+        ? (sectionLessons.length / progress.totalLessons) * 100
+        : 0,
+    };
+  } catch {
+    return null;
+  }
 }
 
-/**
- * Get level progress
- */
-export async function getLevelProgress(
-  userId: string,
-  languageCode: string,
-  levelId: string
-): Promise<LevelProgress | null> {
-  const progress = await loadProgress(userId);
-  if (!progress) return null;
-
-  return progress.levels.find(l => l.levelId === levelId) || null;
-}
-
-/**
- * Get completion percentage for a level
- */
 export async function getCompletionPercentage(
   userId: string,
   languageCode: string,
   levelId: string
 ): Promise<number> {
-  const levelProgress = await getLevelProgress(userId, languageCode, levelId);
-  return levelProgress?.overallProgress ?? 0;
-}
+  if (isServer()) return 0;
 
-// ============================================================================
-// Streak Functions
-// ============================================================================
-
-/**
- * Update user's learning streak
- */
-function updateStreak(progress: UserProgress): void {
-  const now = new Date();
-  const lastActive = new Date(progress.lastActive);
-
-  const daysDiff = Math.floor((now.getTime() - lastActive.getTime()) / (1000 * 60 * 60 * 24));
-
-  if (daysDiff === 0) {
-    // Same day, no change to streak
-    return;
-  } else if (daysDiff === 1) {
-    // Consecutive day, increment streak
-    progress.streak++;
-  } else {
-    // Streak broken, reset to 1
-    progress.streak = 1;
-  }
-
-  progress.lastActive = now.toISOString();
-}
-
-/**
- * Get user's current streak
- */
-export async function getStreak(userId: string): Promise<number> {
-  const progress = await loadProgress(userId);
-  return progress?.streak ?? 0;
-}
-
-// ============================================================================
-// Statistics Functions
-// ============================================================================
-
-/**
- * Get total time spent learning
- */
-export async function getTotalTimeSpent(userId: string): Promise<number> {
-  const progress = await loadProgress(userId);
-  return progress?.totalTimeSpent ?? 0;
-}
-
-/**
- * Get statistics for user progress
- */
-export async function getStatistics(userId: string, languageCode: string): Promise<{
-  totalLessonsCompleted: number;
-  totalTimeSpent: number;
-  currentStreak: number;
-  levelsInProgress: number;
-  overallProgress: number;
-}> {
-  const progress = await loadProgress(userId);
-
-  if (!progress) {
-    return {
-      totalLessonsCompleted: 0,
-      totalTimeSpent: 0,
-      currentStreak: 0,
-      levelsInProgress: 0,
-      overallProgress: 0,
-    };
-  }
-
-  const totalLessonsCompleted = progress.levels.reduce(
-    (total, level) =>
-      total + level.sections.reduce((sum, section) => sum + section.completedLessons, 0),
-    0
-  );
-
-  const levelsInProgress = progress.levels.length;
-
-  const overallProgress = progress.levels.reduce(
-    (sum, level) => sum + level.overallProgress,
-    0
-  ) / Math.max(levelsInProgress, 1);
-
-  return {
-    totalLessonsCompleted,
-    totalTimeSpent: progress.totalTimeSpent,
-    currentStreak: progress.streak,
-    levelsInProgress,
-    overallProgress,
-  };
-}
-
-// ============================================================================
-// Reset Functions
-// ============================================================================
-
-/**
- * Reset all progress for a user (use with caution!)
- */
-export async function resetProgress(userId: string): Promise<void> {
   try {
-    const db = await initializeDB();
-    const transaction = db.transaction([PROGRESS_STORE], 'readwrite');
-    const objectStore = transaction.objectStore(PROGRESS_STORE);
-    objectStore.delete(userId);
+    const progress = await getLevelProgressRecord(userId, languageCode, levelId);
+    if (!progress || progress.totalLessons === 0) return 0;
+
+    return (progress.completedLessons.length / progress.totalLessons) * 100;
+  } catch {
+    return 0;
+  }
+}
+
+export async function getStreak(userId: string): Promise<number> {
+  if (isServer()) return 0;
+
+  try {
+    const user = await dbGet<User>(STORES.users, userId);
+    return user?.streak ?? 0;
+  } catch {
+    return 0;
+  }
+}
+
+export async function logSession(
+  userId: string,
+  languageCode: string,
+  duration: number,
+  activityType: Session['activityType']
+): Promise<void> {
+  if (isServer()) return;
+
+  try {
+    const session: Session = {
+      id: `${userId}:${Date.now()}`,
+      userId,
+      languageCode,
+      duration,
+      activityType,
+      timestamp: new Date().toISOString(),
+    };
+    await dbPut(STORES.sessions, session);
+
+    // Update user's total time
+    const user = await getOrCreateUser(userId);
+    user.totalTimeSpent += duration;
+    await dbPut(STORES.users, user);
   } catch (error) {
-    console.warn('IndexedDB delete failed, falling back to localStorage:', error);
-    const key = `${FALLBACK_KEY_PREFIX}${userId}`;
-    localStorage.removeItem(key);
+    console.warn('Failed to log session:', error);
+  }
+}
+
+export async function resetProgress(userId: string): Promise<void> {
+  if (isServer()) return;
+
+  try {
+    const db = await getDB();
+    const storeNames = [STORES.users, STORES.userLanguages, STORES.levelProgress, STORES.sessions];
+    const tx = db.transaction(storeNames, 'readwrite');
+
+    tx.objectStore(STORES.users).delete(userId);
+
+    // Delete all records for this user from each store with userId index
+    for (const storeName of [STORES.userLanguages, STORES.levelProgress, STORES.sessions]) {
+      const store = tx.objectStore(storeName);
+      const index = store.index('userId');
+      const req = index.openCursor(IDBKeyRange.only(userId));
+      req.onsuccess = () => {
+        const cursor = req.result;
+        if (cursor) {
+          cursor.delete();
+          cursor.continue();
+        }
+      };
+    }
+  } catch (error) {
+    console.warn('Failed to reset progress:', error);
   }
 }

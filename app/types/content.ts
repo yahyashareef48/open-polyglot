@@ -248,43 +248,47 @@ export interface VocabularyGame {
 }
 
 // ============================================================================
-// Progress Tracking Types
+// Progress Tracking Types (IndexedDB stores)
 // ============================================================================
 
-export interface LessonProgress {
-  lessonId: string;
-  completed: boolean;
-  completedAt?: string; // ISO date string
-  score?: number; // Quiz score if applicable
-  timeSpent?: number; // Minutes spent on lesson
+// Store: users (key: oduserId)
+export interface User {
+  userId: string;
+  createdAt: string;
+  lastActive: string;
+  streak: number;
+  totalTimeSpent: number;
 }
 
-export interface SectionProgress {
-  sectionId: string;
-  completedLessons: number;
-  totalLessons: number;
-  percentComplete: number;
-  lessons: LessonProgress[];
-}
-
-export interface LevelProgress {
-  levelId: string;
-  currentSection: string;
-  currentLesson: string;
-  sections: SectionProgress[];
-  overallProgress: number; // Percentage
-}
-
-export interface UserProgress {
+// Store: user_languages (key: userId:languageCode)
+export interface UserLanguage {
+  id: string; // userId:languageCode
   userId: string;
   languageCode: string;
   currentLevel: string;
-  levels: LevelProgress[];
-  totalTimeSpent: number; // Total minutes spent learning
-  streak: number; // Current daily streak
-  lastActive: string; // ISO date string
-  createdAt: string;
-  updatedAt: string;
+  startedAt: string;
+  lastStudiedAt: string;
+}
+
+// Store: level_progress (key: oduserId:languageCode:levelId)
+export interface LevelProgress {
+  id: string; // oduserId:languageCode:levelId
+  userId: string;
+  languageCode: string;
+  levelId: string;
+  completedLessons: string[]; // array of lessonIds
+  totalLessons: number;
+  completed: boolean;
+}
+
+// Store: sessions (for analytics/AI)
+export interface Session {
+  id: string;
+  userId: string;
+  languageCode: string;
+  duration: number; // minutes
+  activityType: 'lesson' | 'quiz' | 'practice' | 'review';
+  timestamp: string;
 }
 
 // ============================================================================
