@@ -163,6 +163,11 @@ export async function saveProgress(progress: UserProgress): Promise<void> {
  * Load user progress
  */
 export async function loadProgress(userId: string): Promise<UserProgress | null> {
+  // Return null on server - progress is client-side only
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
   try {
     return await loadFromIndexedDB(userId);
   } catch (error) {
