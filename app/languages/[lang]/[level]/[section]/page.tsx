@@ -104,7 +104,7 @@ export default async function SectionPage({ params }: SectionPageProps) {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                       <div>
-                        <div className="text-2xl font-bold text-white">{sectionProgress.completedLessons}/{sectionProgress.totalLessons}</div>
+                        <div className="text-2xl font-bold text-white">{sectionProgress.completedLessons}/{sectionMeta.lessons.length}</div>
                         <div className="text-xs text-white/70">Completed</div>
                       </div>
                     </div>
@@ -159,7 +159,7 @@ export default async function SectionPage({ params }: SectionPageProps) {
 
           <div className="space-y-4">
             {sectionMeta.lessons.map((lesson, index) => {
-              const isCompleted = sectionProgress?.lessons.find(l => l.lessonId === lesson.id)?.completed ?? false;
+              const isCompleted = false; // TODO: Implement per-lesson completion check
 
               return (
                 <Link
