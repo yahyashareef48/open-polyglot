@@ -251,7 +251,7 @@ export interface VocabularyGame {
 // Progress Tracking Types (IndexedDB stores)
 // ============================================================================
 
-// Store: users (key: oduserId)
+// Store: users (key: userId)
 export interface User {
   userId: string;
   createdAt: string;
@@ -260,25 +260,16 @@ export interface User {
   totalTimeSpent: number;
 }
 
-// Store: user_languages (key: userId:languageCode)
-export interface UserLanguage {
-  id: string; // userId:languageCode
-  userId: string;
-  languageCode: string;
-  currentLevel: string;
-  startedAt: string;
-  lastStudiedAt: string;
-}
-
-// Store: level_progress (key: oduserId:languageCode:levelId)
-export interface LevelProgress {
-  id: string; // oduserId:languageCode:levelId
-  userId: string;
-  languageCode: string;
+// Store: lessons (key: userId:languageCode:levelId:sectionId:lessonId)
+export interface Lesson {
+  id: string; // userId:languageCode:levelId:sectionId:lessonId
+  lessonId: string;
+  sectionId: string;
   levelId: string;
-  completedLessons: string[]; // array of lessonIds
-  totalLessons: number;
+  languageCode: string;
+  userId: string;
   completed: boolean;
+  completedAt: string;
 }
 
 // Store: sessions (for analytics/AI)

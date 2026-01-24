@@ -3,14 +3,13 @@
  * Uses IndexedDB with localStorage fallback
  */
 
-import { User, LevelProgress, Session } from '@/app/types/content';
+import { User, Lesson, Session } from '@/app/types/content';
 
 const DB_NAME = 'OpenPolyglotDB';
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 const STORES = {
   users: 'users',
-  userLanguages: 'user_languages',
-  levelProgress: 'level_progress',
+  lessons: 'lessons',
   sessions: 'sessions',
 } as const;
 
@@ -43,12 +42,8 @@ function getDB(): Promise<IDBDatabase> {
       if (!db.objectStoreNames.contains(STORES.users)) {
         db.createObjectStore(STORES.users, { keyPath: 'userId' });
       }
-      if (!db.objectStoreNames.contains(STORES.userLanguages)) {
-        const store = db.createObjectStore(STORES.userLanguages, { keyPath: 'id' });
-        store.createIndex('userId', 'userId', { unique: false });
-      }
-      if (!db.objectStoreNames.contains(STORES.levelProgress)) {
-        const store = db.createObjectStore(STORES.levelProgress, { keyPath: 'id' });
+      if (!db.objectStoreNames.contains(STORES.lessons)) {
+        const store = db.createObjectStore(STORES.lessons, { keyPath: 'id' });
         store.createIndex('userId', 'userId', { unique: false });
       }
       if (!db.objectStoreNames.contains(STORES.sessions)) {
@@ -115,52 +110,27 @@ function updateStreak(user: User): void {
 }
 
 // ============================================================================
-// Level Progress functions
+// Lesson functions
 // ============================================================================
 
-function makeLevelKey(userId: string, lang: string, level: string): string {
-  return `${userId}:${lang}:${level}`;
+function makeLessonKey(userId: string, lang: string, level: string, section: string, lesson: string): string {
+  return `${userId}:${lang}:${level}:${section}:${lesson}`;
 }
 
-async function getLevelProgressRecord(
+async function getLessonRecord(
   userId: string,
   lang: string,
-  level: string
-): Promise<LevelProgress | null> {
+  level: string,
+  section: string,
+  lesson: string
+): Promise<Lesson | null> {
   if (isServer()) return null;
 
   try {
-    return await dbGet<LevelProgress>(STORES.levelProgress, makeLevelKey(userId, lang, level));
+    return await dbGet<Lesson>(STORES.lessons, makeLessonKey(userId, lang, level, section, lesson));
   } catch {
     return null;
   }
-}
-
-async function getOrCreateLevelProgress(
-  userId: string,
-  lang: string,
-  level: string
-): Promise<LevelProgress> {
-  const existing = await getLevelProgressRecord(userId, lang, level);
-  if (existing) return existing;
-
-  const record: LevelProgress = {
-    id: makeLevelKey(userId, lang, level),
-    userId,
-    languageCode: lang,
-    levelId: level,
-    completedLessons: [],
-    totalLessons: 0,
-    completed: false,
-  };
-
-  try {
-    await dbPut(STORES.levelProgress, record);
-  } catch {
-    // Ignore save errors
-  }
-
-  return record;
 }
 
 // ============================================================================
@@ -177,14 +147,18 @@ export async function markLessonComplete(
   if (isServer()) return;
 
   try {
-    const lessonKey = `${sectionId}/${lessonId}`;
-    const progress = await getOrCreateLevelProgress(userId, languageCode, levelId);
+    const lesson: Lesson = {
+      id: makeLessonKey(userId, languageCode, levelId, sectionId, lessonId),
+      lessonId,
+      sectionId,
+      levelId,
+      languageCode,
+      userId,
+      completed: true,
+      completedAt: new Date().toISOString(),
+    };
 
-    if (!progress.completedLessons.includes(lessonKey)) {
-      progress.completedLessons.push(lessonKey);
-    }
-
-    await dbPut(STORES.levelProgress, progress);
+    await dbPut(STORES.lessons, lesson);
 
     const user = await getOrCreateUser(userId);
     updateStreak(user);
@@ -204,13 +178,27 @@ export async function getLessonProgress(
   if (isServer()) return null;
 
   try {
-    const progress = await getLevelProgressRecord(userId, languageCode, levelId);
-    if (!progress) return null;
-
-    const lessonKey = `${sectionId}/${lessonId}`;
-    return { completed: progress.completedLessons.includes(lessonKey) };
+    const lesson = await getLessonRecord(userId, languageCode, levelId, sectionId, lessonId);
+    return { completed: lesson?.completed ?? false };
   } catch {
     return null;
+  }
+}
+
+async function getAllLessonsForUser(userId: string): Promise<Lesson[]> {
+  if (isServer()) return [];
+
+  try {
+    const db = await getDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORES.lessons, 'readonly');
+      const index = tx.objectStore(STORES.lessons).index('userId');
+      const req = index.getAll(userId);
+      req.onsuccess = () => resolve(req.result || []);
+      req.onerror = () => reject(req.error);
+    });
+  } catch {
+    return [];
   }
 }
 
@@ -218,41 +206,41 @@ export async function getSectionProgress(
   userId: string,
   languageCode: string,
   levelId: string,
-  sectionId: string
-): Promise<{ completedLessons: number; percentComplete: number } | null> {
-  if (isServer()) return null;
+  sectionId: string,
+  totalLessons: number
+): Promise<{ completedLessons: number; percentComplete: number }> {
+  if (isServer()) return { completedLessons: 0, percentComplete: 0 };
 
   try {
-    const progress = await getLevelProgressRecord(userId, languageCode, levelId);
-    if (!progress) return null;
-
-    const sectionLessons = progress.completedLessons.filter(
-      (key) => key.startsWith(`${sectionId}/`)
+    const allLessons = await getAllLessonsForUser(userId);
+    const sectionLessons = allLessons.filter(
+      (l) => l.languageCode === languageCode && l.levelId === levelId && l.sectionId === sectionId && l.completed
     );
 
     return {
       completedLessons: sectionLessons.length,
-      percentComplete: progress.totalLessons > 0
-        ? (sectionLessons.length / progress.totalLessons) * 100
-        : 0,
+      percentComplete: totalLessons > 0 ? (sectionLessons.length / totalLessons) * 100 : 0,
     };
   } catch {
-    return null;
+    return { completedLessons: 0, percentComplete: 0 };
   }
 }
 
 export async function getCompletionPercentage(
   userId: string,
   languageCode: string,
-  levelId: string
+  levelId: string,
+  totalLessons: number
 ): Promise<number> {
   if (isServer()) return 0;
 
   try {
-    const progress = await getLevelProgressRecord(userId, languageCode, levelId);
-    if (!progress || progress.totalLessons === 0) return 0;
+    const allLessons = await getAllLessonsForUser(userId);
+    const levelLessons = allLessons.filter(
+      (l) => l.languageCode === languageCode && l.levelId === levelId && l.completed
+    );
 
-    return (progress.completedLessons.length / progress.totalLessons) * 100;
+    return totalLessons > 0 ? (levelLessons.length / totalLessons) * 100 : 0;
   } catch {
     return 0;
   }
@@ -302,13 +290,12 @@ export async function resetProgress(userId: string): Promise<void> {
 
   try {
     const db = await getDB();
-    const storeNames = [STORES.users, STORES.userLanguages, STORES.levelProgress, STORES.sessions];
+    const storeNames = [STORES.users, STORES.lessons, STORES.sessions];
     const tx = db.transaction(storeNames, 'readwrite');
 
     tx.objectStore(STORES.users).delete(userId);
 
-    // Delete all records for this user from each store with userId index
-    for (const storeName of [STORES.userLanguages, STORES.levelProgress, STORES.sessions]) {
+    for (const storeName of [STORES.lessons, STORES.sessions]) {
       const store = tx.objectStore(storeName);
       const index = store.index('userId');
       const req = index.openCursor(IDBKeyRange.only(userId));
