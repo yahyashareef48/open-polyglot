@@ -87,7 +87,7 @@ export function AudioPlayerProvider({ children }: AudioPlayerProviderProps) {
   // State
   const [lessonContent, setLessonContent] = useState<LessonContent | null>(null);
   const [playbackSpeed, setPlaybackSpeedState] = useState<PlaybackSpeed>(1);
-  const [isMinimized, setIsMinimized] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedVoice, setSelectedVoice] = useState<SpeechSynthesisVoice | null>(null);
 
