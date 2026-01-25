@@ -13,17 +13,17 @@ export function Navigation() {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const hostname = window.location.hostname;
-      const isLocalhost = hostname.includes('localhost');
+      const isLocalhost = hostname.includes("localhost");
 
       // Check if we're on a subdomain
-      const parts = hostname.split('.');
-      const hasSubdomain = parts.length > 2 || (isLocalhost && parts[0] !== 'localhost');
+      const parts = hostname.split(".");
+      const hasSubdomain = parts.length > 2 || (isLocalhost && parts[0] !== "localhost");
 
       setIsOnSubdomain(hasSubdomain);
 
       if (hasSubdomain) {
         if (isLocalhost) {
-          const port = window.location.port ? `:${window.location.port}` : '';
+          const port = window.location.port ? `:${window.location.port}` : "";
           setMainDomainUrl(`http://localhost${port}`);
         } else {
           // For production, always use openpolyglot.org regardless of hosting platform
@@ -32,7 +32,7 @@ export function Navigation() {
             baseDomain = "openpolyglot.org";
           } else {
             // Fallback for other domains
-            baseDomain = hostname.replace(/^[^.]+\./, '');
+            baseDomain = hostname.replace(/^[^.]+\./, "");
           }
           setMainDomainUrl(`https://${baseDomain}`);
         }
@@ -68,16 +68,8 @@ export function Navigation() {
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <a href={isOnSubdomain ? mainDomainUrl : "/"} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-                <img
-                  src="/logo/logo-owl-no-bg.png"
-                  alt="Open Polyglot Logo"
-                  width={40}
-                  height={40}
-                  className="object-contain"
-                />
-                <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  Open Polyglot
-                </span>
+                <img src="/logo/logo-owl-no-bg.png" alt="Open Polyglot Logo" width={40} height={40} className="object-contain" />
+                <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Open Polyglot</span>
               </a>
             </div>
           </div>
@@ -85,23 +77,35 @@ export function Navigation() {
           <div className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-4">
               {isOnSubdomain && (
-                <a href={mainDomainUrl} className="text-foreground hover:text-primary transition-colors px-3 py-2 rounded-md text-sm font-medium flex items-center gap-1">
+                <a
+                  href={mainDomainUrl}
+                  className="text-foreground hover:text-primary transition-colors px-3 py-2 rounded-md text-sm font-medium flex items-center gap-1"
+                >
                   <Home size={16} />
                   Home
                 </a>
               )}
-              <a href={getNavLink("features")} className="text-foreground hover:text-primary transition-colors px-3 py-2 rounded-md text-sm font-medium">
+              <a
+                href={getNavLink("features")}
+                className="text-foreground hover:text-primary transition-colors px-3 py-2 rounded-md text-sm font-medium"
+              >
                 Features
               </a>
-              <a href={getNavLink("languages")} className="text-foreground hover:text-primary transition-colors px-3 py-2 rounded-md text-sm font-medium">
+              <a
+                href={getNavLink("languages")}
+                className="text-foreground hover:text-primary transition-colors px-3 py-2 rounded-md text-sm font-medium"
+              >
                 Languages
               </a>
-              <a href={getNavLink("how-it-works")} className="text-foreground hover:text-primary transition-colors px-3 py-2 rounded-md text-sm font-medium">
+              <a
+                href={getNavLink("how-it-works")}
+                className="text-foreground hover:text-primary transition-colors px-3 py-2 rounded-md text-sm font-medium"
+              >
                 How It Works
               </a>
-              <a href={isOnSubdomain ? `${mainDomainUrl}/blog` : "/blog"} className="text-foreground hover:text-primary transition-colors px-3 py-2 rounded-md text-sm font-medium">
+              {/* <a href={isOnSubdomain ? `${mainDomainUrl}/blog` : "/blog"} className="text-foreground hover:text-primary transition-colors px-3 py-2 rounded-md text-sm font-medium">
                 Blog
-              </a>
+              </a> */}
               <a
                 href="https://github.com/yahyashareef48/open-polyglot"
                 target="_blank"
@@ -117,7 +121,10 @@ export function Navigation() {
           <div className="flex items-center space-x-4">
             {!isOnSubdomain && (
               <div className="hidden md:block">
-                <a href={getNavLink("languages")} className="bg-primary text-primary-foreground hover:bg-primary/90 transition-colors px-4 py-2 rounded-md text-sm font-medium flex items-center gap-2">
+                <a
+                  href={getNavLink("languages")}
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 transition-colors px-4 py-2 rounded-md text-sm font-medium flex items-center gap-2"
+                >
                   Start Learning
                   <ExternalLink size={16} />
                 </a>
@@ -191,7 +198,10 @@ export function Navigation() {
             </a>
             {!isOnSubdomain && (
               <div className="pt-2">
-                <a href={getNavLink("languages")} className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors px-4 py-2 rounded-md text-sm font-medium flex items-center justify-center gap-2">
+                <a
+                  href={getNavLink("languages")}
+                  className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors px-4 py-2 rounded-md text-sm font-medium flex items-center justify-center gap-2"
+                >
                   Start Learning
                   <ExternalLink size={16} />
                 </a>
