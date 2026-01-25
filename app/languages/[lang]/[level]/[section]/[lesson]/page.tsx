@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { getLessonContent, getNavigationInfo, getSectionMetadata, getSectionsForLevel, getLanguageMetadata, getLevelMetadata } from "@/lib/content";
 import LessonContent from "@/app/components/lessons/LessonContent";
-import LessonNavigation from "@/app/components/lessons/LessonNavigation";
 import LessonCompletionToggle from "@/app/components/lessons/LessonCompletionToggle";
 import LessonAudioLoader from "@/app/components/lessons/LessonAudioLoader";
 import LessonSidebar from "@/app/components/lessons/LessonSidebar";
