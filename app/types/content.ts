@@ -258,6 +258,7 @@ export interface User {
   lastActive: string;
   streak: number;
   totalTimeSpent: number;
+  lastOpened?: Record<string, string>; // { [lang]: "level:section:lesson" }
 }
 
 // Store: lessons (key: userId:languageCode:levelId:sectionId:lessonId)

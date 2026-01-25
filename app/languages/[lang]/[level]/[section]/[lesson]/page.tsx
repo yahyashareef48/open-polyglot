@@ -10,6 +10,7 @@ import LessonNavigation from "@/app/components/lessons/LessonNavigation";
 import MarkCompleteButton from "@/app/components/lessons/MarkCompleteButton";
 import LessonAudioLoader from "@/app/components/lessons/LessonAudioLoader";
 import LessonSidebar from "@/app/components/lessons/LessonSidebar";
+import LastOpenedTracker from "@/app/components/lessons/LastOpenedTracker";
 
 interface LessonPageProps {
   params: Promise<{
@@ -124,6 +125,15 @@ export default async function LessonPage({ params }: LessonPageProps) {
 
     return (
       <div className="flex min-h-screen bg-gray-50 dark:bg-gray-950">
+        {/* Track last opened lesson */}
+        <LastOpenedTracker
+          userId={userId}
+          languageCode={lang}
+          levelId={level}
+          sectionId={section}
+          lessonId={lesson}
+        />
+
         {/* Load lesson content into audio player */}
         <LessonAudioLoader lessonContent={lessonContent} />
 
@@ -378,7 +388,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
             available.
           </p>
           <Link
-            href={`/${level}/${section}`}
+            href={`/${level}`}
             className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium"
           >
             <svg
@@ -394,7 +404,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
                 d="M15 19l-7-7 7-7"
               />
             </svg>
-            Back to Section
+            Back to Level
           </Link>
         </div>
       </div>

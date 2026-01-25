@@ -311,3 +311,65 @@ export async function resetProgress(userId: string): Promise<void> {
     console.warn('Failed to reset progress:', error);
   }
 }
+
+// ============================================================================
+// Last Opened Lesson Tracking
+// ============================================================================
+
+/**
+ * Save the last opened lesson for a language
+ * @param userId - User ID
+ * @param languageCode - Language code (e.g., 'german')
+ * @param levelId - Level ID (e.g., 'a1')
+ * @param sectionId - Section ID
+ * @param lessonId - Lesson ID
+ */
+export async function saveLastOpenedLesson(
+  userId: string,
+  languageCode: string,
+  levelId: string,
+  sectionId: string,
+  lessonId: string
+): Promise<void> {
+  if (isServer()) return;
+
+  try {
+    const user = await getOrCreateUser(userId);
+    if (!user.lastOpened) {
+      user.lastOpened = {};
+    }
+    user.lastOpened[languageCode] = `${levelId}:${sectionId}:${lessonId}`;
+    await dbPut(STORES.users, user);
+  } catch (error) {
+    console.warn('Failed to save last opened lesson:', error);
+  }
+}
+
+/**
+ * Get the last opened lesson for a language
+ * @param userId - User ID
+ * @param languageCode - Language code
+ * @returns Object with level, section, lesson IDs or null if not found
+ */
+export async function getLastOpenedLesson(
+  userId: string,
+  languageCode: string
+): Promise<{ levelId: string; sectionId: string; lessonId: string } | null> {
+  if (isServer()) return null;
+
+  try {
+    const user = await dbGet<User>(STORES.users, userId);
+    if (!user?.lastOpened?.[languageCode]) {
+      return null;
+    }
+
+    const [levelId, sectionId, lessonId] = user.lastOpened[languageCode].split(':');
+    if (!levelId || !sectionId || !lessonId) {
+      return null;
+    }
+
+    return { levelId, sectionId, lessonId };
+  } catch {
+    return null;
+  }
+}

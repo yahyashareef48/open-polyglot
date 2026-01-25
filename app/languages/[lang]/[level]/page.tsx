@@ -1,6 +1,7 @@
 import Link from 'next/link';
-import { getLevelMetadata, getSectionsForLevel, getLanguageMetadata, getTotalLessonCount } from '@/lib/content';
+import { getLevelMetadata, getSectionsForLevel, getTotalLessonCount } from '@/lib/content';
 import ProgressCircle from '@/app/components/progress/ProgressCircle';
+import LevelRedirector from '@/app/components/level/LevelRedirector';
 
 interface LevelPageProps {
   params: Promise<{
@@ -34,11 +35,17 @@ export default async function LevelPage({ params }: LevelPageProps) {
   try {
     const levelMeta = await getLevelMetadata(lang, level);
     const sections = await getSectionsForLevel(lang, level);
-    const languageMeta = await getLanguageMetadata(lang);
 
     // TODO: Get actual user ID from auth context
     const userId = 'guest';
     const totalLessons = await getTotalLessonCount(lang, level);
+
+    // Get first lesson path for redirect fallback
+    const firstSection = sections[0];
+    const firstLesson = firstSection?.lessons[0];
+    const firstLessonPath = firstSection && firstLesson
+      ? `/${level}/${firstSection.id}/${firstLesson.id}`
+      : `/${level}`;
 
     // Get theme for this language or fallback to default
     const theme = languageThemes[lang] || {
@@ -48,6 +55,14 @@ export default async function LevelPage({ params }: LevelPageProps) {
 
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
+        {/* Redirect to last opened or first lesson */}
+        <LevelRedirector
+          userId={userId}
+          languageCode={lang}
+          levelId={level}
+          firstLessonPath={firstLessonPath}
+        />
+
         {/* Animated background elements */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-blue-500/[0.03] dark:bg-blue-400/[0.05] rounded-full blur-3xl animate-pulse"></div>
@@ -174,10 +189,17 @@ export default async function LevelPage({ params }: LevelPageProps) {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {sections.map((section, index) => (
+                {sections.map((section, index) => {
+                  // Link directly to first lesson
+                  const sectionFirstLesson = section.lessons[0];
+                  const sectionLink = sectionFirstLesson
+                    ? `/${level}/${section.id}/${sectionFirstLesson.id}`
+                    : `/${level}`;
+
+                  return (
                   <Link
                     key={section.id}
-                    href={`/${level}/${section.id}`}
+                    href={sectionLink}
                     className="group"
                   >
                     <div className="relative h-full bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 overflow-hidden">
@@ -234,7 +256,8 @@ export default async function LevelPage({ params }: LevelPageProps) {
                       </div>
                     </div>
                   </Link>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
