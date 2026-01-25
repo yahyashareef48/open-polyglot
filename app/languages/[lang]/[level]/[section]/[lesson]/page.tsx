@@ -1,9 +1,8 @@
 import Link from "next/link";
-import { getLessonContent, getNavigationInfo, getSectionMetadata, getSectionsForLevel, getLanguageMetadata, getLevelMetadata } from "@/lib/content";
+import { getLessonContent, getNavigationInfo, getSectionMetadata } from "@/lib/content";
 import LessonContent from "@/app/components/lessons/LessonContent";
 import LessonCompletionToggle from "@/app/components/lessons/LessonCompletionToggle";
 import LessonAudioLoader from "@/app/components/lessons/LessonAudioLoader";
-import LessonSidebar from "@/app/components/lessons/LessonSidebar";
 import LastOpenedTracker from "@/app/components/lessons/LastOpenedTracker";
 import ScrollProgressBar from "@/app/components/lessons/ScrollProgressBar";
 
@@ -85,11 +84,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
 
   try {
     const lessonContent = await getLessonContent(lang, level, section, lesson);
-    const navigationInfo = await getNavigationInfo(lang, level, section, lesson);
     const sectionMeta = await getSectionMetadata(lang, level, section);
-    const allSections = await getSectionsForLevel(lang, level);
-    const languageMeta = await getLanguageMetadata(lang);
-    const levelMeta = await getLevelMetadata(lang, level);
 
     // TODO: Get actual user ID from auth context
     const userId = "guest";
@@ -109,36 +104,16 @@ export default async function LessonPage({ params }: LessonPageProps) {
     // Get lesson type config
     const typeConfig = lessonTypeConfig[lessonInfo?.type || "informational"];
 
-    // Prepare sections for sidebar
-    const sectionsWithUrls = allSections.map((s) => ({
-      ...s,
-      url: `/${level}/${s.id}`,
-    }));
-
     return (
-      <div className="flex h-screen overflow-hidden bg-gray-50 dark:bg-gray-950">
+      <>
         {/* Track last opened lesson */}
         <LastOpenedTracker userId={userId} languageCode={lang} levelId={level} sectionId={section} lessonId={lesson} />
 
         {/* Load lesson content into audio player */}
         <LessonAudioLoader lessonContent={lessonContent} />
 
-        {/* Sidebar */}
-        <LessonSidebar
-          sections={sectionsWithUrls}
-          currentSectionId={section}
-          currentLessonId={lesson}
-          levelId={level}
-          languageCode={lang}
-          userId={userId}
-          languageName={languageMeta.name}
-          levelName={levelMeta.name}
-        />
-
-        {/* Main content area */}
-        <main className="flex-1 min-w-0 overflow-y-auto lesson-page-scroll">
-          {/* Compact header */}
-          <header className={`sticky top-0 z-30 bg-gradient-to-r ${theme.accent} ${theme.accentDark} shadow-lg`}>
+        {/* Compact header */}
+        <header className={`sticky top-0 z-30 bg-gradient-to-r ${theme.accent} ${theme.accentDark} shadow-lg`}>
             <div className="px-6 lg:px-12 py-4">
               <div className="flex items-center justify-between gap-4">
                 {/* Left side - breadcrumb and title */}
@@ -252,8 +227,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
               )}
             </div>
           </div>
-        </main>
-      </div>
+      </>
     );
   } catch (error) {
     console.error("Error loading lesson:", error);

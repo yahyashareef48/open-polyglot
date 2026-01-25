@@ -1,21 +1,19 @@
 'use client';
 
 /**
- * Lesson Layout
- * Wraps lesson pages with AudioPlayerProvider and renders the AudioPlayer component
+ * Client wrapper for the lesson layout
+ * Provides AudioPlayerProvider and keyboard shortcuts
  */
 
+import { ReactNode } from 'react';
 import { AudioPlayerProvider } from '@/app/contexts/AudioPlayerContext';
 import { AudioPlayer, useAudioPlayerKeyboardShortcuts } from '@/app/components/lessons/AudioPlayer';
-import { ReactNode, useEffect } from 'react';
 
-interface LessonLayoutProps {
+interface LessonLayoutClientProps {
   children: ReactNode;
 }
 
-// Inner component that uses the audio player hook
-function LessonLayoutInner({ children }: LessonLayoutProps) {
-  // Enable keyboard shortcuts
+function LessonLayoutInner({ children }: LessonLayoutClientProps) {
   useAudioPlayerKeyboardShortcuts();
 
   return (
@@ -26,7 +24,7 @@ function LessonLayoutInner({ children }: LessonLayoutProps) {
   );
 }
 
-export default function LessonLayout({ children }: LessonLayoutProps) {
+export default function LessonLayoutClient({ children }: LessonLayoutClientProps) {
   return (
     <AudioPlayerProvider>
       <LessonLayoutInner>{children}</LessonLayoutInner>

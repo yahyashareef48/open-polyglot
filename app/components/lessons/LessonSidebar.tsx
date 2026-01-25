@@ -13,8 +13,6 @@ interface SectionWithMeta extends SectionMetadata {
 
 interface LessonSidebarProps {
   sections: SectionWithMeta[];
-  currentSectionId: string;
-  currentLessonId: string;
   levelId: string;
   languageCode: string;
   userId: string;
@@ -28,8 +26,6 @@ interface CompletionState {
 
 export default function LessonSidebar({
   sections,
-  currentSectionId,
-  currentLessonId,
   levelId,
   languageCode,
   userId,
@@ -37,6 +33,13 @@ export default function LessonSidebar({
   levelName,
 }: LessonSidebarProps) {
   const pathname = usePathname();
+
+  // Derive current section and lesson from URL pathname
+  // URL format: /[level]/[section]/[lesson]
+  const pathParts = pathname.split('/').filter(Boolean);
+  const currentSectionId = pathParts[1] || '';
+  const currentLessonId = pathParts[2] || '';
+
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set([currentSectionId]));
   const [completionState, setCompletionState] = useState<CompletionState>({});
   const [isMobileOpen, setIsMobileOpen] = useState(false);
