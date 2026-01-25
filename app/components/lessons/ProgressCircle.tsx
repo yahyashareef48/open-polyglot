@@ -1,7 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { getCompletionPercentage, getSectionProgress } from '@/lib/progress';
+import { useEffect, useState, useCallback } from 'react';
+import {
+  getCompletionPercentage,
+  getSectionProgress,
+  progressEvents,
+  PROGRESS_EVENTS,
+  ProgressEventData,
+} from '@/lib/progress';
 
 interface ProgressCircleProps {
   userId: string;
@@ -20,30 +26,55 @@ export default function ProgressCircle({
 }: ProgressCircleProps) {
   const [completionPercentage, setCompletionPercentage] = useState(0);
 
-  useEffect(() => {
-    async function loadProgress() {
-      let percentage = 0;
-      if (sectionId) {
-        const progress = await getSectionProgress(
-          userId,
-          languageCode,
-          levelId,
-          sectionId,
-          totalLessons
-        );
-        percentage = progress.percentComplete;
-      } else {
-        percentage = await getCompletionPercentage(
-          userId,
-          languageCode,
-          levelId,
-          totalLessons
-        );
-      }
-      setCompletionPercentage(percentage);
+  const loadProgress = useCallback(async () => {
+    let percentage = 0;
+    if (sectionId) {
+      const progress = await getSectionProgress(
+        userId,
+        languageCode,
+        levelId,
+        sectionId,
+        totalLessons
+      );
+      percentage = progress.percentComplete;
+    } else {
+      percentage = await getCompletionPercentage(
+        userId,
+        languageCode,
+        levelId,
+        totalLessons
+      );
     }
-    loadProgress();
+    setCompletionPercentage(percentage);
   }, [userId, languageCode, levelId, sectionId, totalLessons]);
+
+  // Load progress on mount and when dependencies change
+  useEffect(() => {
+    loadProgress();
+  }, [loadProgress]);
+
+  // Listen for progress events and refresh
+  useEffect(() => {
+    const handleProgressChange = (data: ProgressEventData) => {
+      // Only refresh if the event is for the same level (and section if specified)
+      if (
+        data.userId === userId &&
+        data.languageCode === languageCode &&
+        data.levelId === levelId &&
+        (!sectionId || data.sectionId === sectionId)
+      ) {
+        loadProgress();
+      }
+    };
+
+    progressEvents.on(PROGRESS_EVENTS.LESSON_COMPLETED, handleProgressChange);
+    progressEvents.on(PROGRESS_EVENTS.LESSON_INCOMPLETED, handleProgressChange);
+
+    return () => {
+      progressEvents.off(PROGRESS_EVENTS.LESSON_COMPLETED, handleProgressChange);
+      progressEvents.off(PROGRESS_EVENTS.LESSON_INCOMPLETED, handleProgressChange);
+    };
+  }, [userId, languageCode, levelId, sectionId, loadProgress]);
 
   return (
     <div className="w-full">

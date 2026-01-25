@@ -4,6 +4,23 @@
  */
 
 import { User, Lesson, Session } from '@/app/types/content';
+import { EventEmitter } from 'events';
+
+// Event emitter for progress changes
+export const progressEvents = new EventEmitter();
+
+export type ProgressEventData = {
+  userId: string;
+  languageCode: string;
+  levelId: string;
+  sectionId: string;
+  lessonId: string;
+};
+
+export const PROGRESS_EVENTS = {
+  LESSON_COMPLETED: 'lesson:completed',
+  LESSON_INCOMPLETED: 'lesson:incompleted',
+} as const;
 
 const DB_NAME = 'OpenPolyglotDB';
 const DB_VERSION = 3;
@@ -163,6 +180,15 @@ export async function markLessonComplete(
     const user = await getOrCreateUser(userId);
     updateStreak(user);
     await dbPut(STORES.users, user);
+
+    // Emit event for lesson completion
+    progressEvents.emit(PROGRESS_EVENTS.LESSON_COMPLETED, {
+      userId,
+      languageCode,
+      levelId,
+      sectionId,
+      lessonId,
+    } as ProgressEventData);
   } catch (error) {
     console.warn('Failed to mark lesson complete:', error);
   }
@@ -181,12 +207,21 @@ export async function markLessonIncomplete(
     const db = await getDB();
     const key = makeLessonKey(userId, languageCode, levelId, sectionId, lessonId);
 
-    return new Promise((resolve, reject) => {
+    await new Promise<void>((resolve, reject) => {
       const tx = db.transaction(STORES.lessons, 'readwrite');
       const req = tx.objectStore(STORES.lessons).delete(key);
       req.onsuccess = () => resolve();
       req.onerror = () => reject(req.error);
     });
+
+    // Emit event for lesson incompletion
+    progressEvents.emit(PROGRESS_EVENTS.LESSON_INCOMPLETED, {
+      userId,
+      languageCode,
+      levelId,
+      sectionId,
+      lessonId,
+    } as ProgressEventData);
   } catch (error) {
     console.warn('Failed to mark lesson incomplete:', error);
   }
