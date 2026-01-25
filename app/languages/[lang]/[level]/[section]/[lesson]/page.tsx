@@ -2,7 +2,7 @@ import Link from "next/link";
 import { getLessonContent, getNavigationInfo, getSectionMetadata, getSectionsForLevel, getLanguageMetadata, getLevelMetadata } from "@/lib/content";
 import LessonContent from "@/app/components/lessons/LessonContent";
 import LessonNavigation from "@/app/components/lessons/LessonNavigation";
-import MarkCompleteButton from "@/app/components/lessons/MarkCompleteButton";
+import LessonCompletionToggle from "@/app/components/lessons/LessonCompletionToggle";
 import LessonAudioLoader from "@/app/components/lessons/LessonAudioLoader";
 import LessonSidebar from "@/app/components/lessons/LessonSidebar";
 import LastOpenedTracker from "@/app/components/lessons/LastOpenedTracker";
@@ -195,7 +195,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
                 <LessonContent content={lessonContent} />
 
                 {/* Footer with mark complete button */}
-                <MarkCompleteButton userId={userId} languageCode={lang} levelId={level} sectionId={section} lessonId={lesson} />
+                <LessonCompletionToggle userId={userId} languageCode={lang} levelId={level} sectionId={section} lessonId={lesson} />
               </article>
 
               {/* Additional practice section */}

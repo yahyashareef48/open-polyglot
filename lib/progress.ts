@@ -168,6 +168,30 @@ export async function markLessonComplete(
   }
 }
 
+export async function markLessonIncomplete(
+  userId: string,
+  languageCode: string,
+  levelId: string,
+  sectionId: string,
+  lessonId: string
+): Promise<void> {
+  if (isServer()) return;
+
+  try {
+    const db = await getDB();
+    const key = makeLessonKey(userId, languageCode, levelId, sectionId, lessonId);
+
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORES.lessons, 'readwrite');
+      const req = tx.objectStore(STORES.lessons).delete(key);
+      req.onsuccess = () => resolve();
+      req.onerror = () => reject(req.error);
+    });
+  } catch (error) {
+    console.warn('Failed to mark lesson incomplete:', error);
+  }
+}
+
 export async function getLessonProgress(
   userId: string,
   languageCode: string,
