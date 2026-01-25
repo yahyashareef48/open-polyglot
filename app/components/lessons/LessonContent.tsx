@@ -108,25 +108,29 @@ export default function LessonContent({ content }: LessonContentProps) {
         }
 
         .lesson-content {
-          line-height: 1.8;
+          line-height: 1.9;
+          font-size: 1.05rem;
+          letter-spacing: 0.01em;
         }
 
         .prose h1 {
           font-size: 2rem;
-          font-weight: bold;
-          margin-top: 2rem;
-          margin-bottom: 1rem;
+          font-weight: 700;
+          margin-top: 2.5rem;
+          margin-bottom: 1.25rem;
           color: inherit;
+          letter-spacing: -0.02em;
         }
 
         .prose h2 {
           font-size: 1.5rem;
-          font-weight: bold;
-          margin-top: 1.5rem;
-          margin-bottom: 0.75rem;
+          font-weight: 600;
+          margin-top: 2.5rem;
+          margin-bottom: 1rem;
           color: inherit;
-          padding-bottom: 0.5rem;
-          border-bottom: 2px solid #e5e7eb;
+          padding-bottom: 0.75rem;
+          border-bottom: 1px solid #e5e7eb;
+          letter-spacing: -0.01em;
         }
 
         .dark .prose h2 {
@@ -136,59 +140,74 @@ export default function LessonContent({ content }: LessonContentProps) {
         .prose h3 {
           font-size: 1.25rem;
           font-weight: 600;
-          margin-top: 1.25rem;
-          margin-bottom: 0.5rem;
+          margin-top: 2rem;
+          margin-bottom: 0.75rem;
           color: inherit;
         }
 
         .prose p {
-          margin-bottom: 1rem;
+          margin-bottom: 1.25rem;
+          color: inherit;
+          opacity: 0.9;
         }
 
         .prose ul,
         .prose ol {
-          margin: 1rem 0;
-          padding-left: 1.5rem;
+          margin: 1.5rem 0;
+          padding-left: 1.75rem;
         }
 
         .prose li {
-          margin-bottom: 0.5rem;
+          margin-bottom: 0.75rem;
+          padding-left: 0.25rem;
+        }
+
+        .prose li::marker {
+          color: #6b7280;
+        }
+
+        .dark .prose li::marker {
+          color: #9ca3af;
         }
 
         .prose a {
-          color: #dc2626;
-          text-decoration: underline;
+          color: #f87171;
+          text-decoration: none;
+          border-bottom: 1px solid transparent;
+          transition: border-color 0.2s ease, color 0.2s ease;
         }
 
         .prose a:hover {
-          color: #b91c1c;
+          color: #fca5a5;
+          border-bottom-color: #fca5a5;
         }
 
         .prose strong {
-          font-weight: 700;
+          font-weight: 600;
           color: inherit;
         }
 
         .prose em {
           font-style: italic;
+          opacity: 0.95;
         }
 
         .prose code {
           background-color: #f3f4f6;
-          padding: 0.2rem 0.4rem;
-          border-radius: 0.25rem;
-          font-size: 0.875rem;
-          font-family: monospace;
+          padding: 0.2rem 0.5rem;
+          border-radius: 0.375rem;
+          font-size: 0.9em;
+          font-family: ui-monospace, monospace;
         }
 
         .dark .prose code {
-          background-color: #374151;
+          background-color: #1f2937;
         }
 
         .prose blockquote {
-          border-left: 4px solid #dc2626;
-          padding-left: 1rem;
-          margin: 1rem 0;
+          border-left: 3px solid #f87171;
+          padding-left: 1.25rem;
+          margin: 1.5rem 0;
           font-style: italic;
           color: #6b7280;
         }
@@ -198,13 +217,17 @@ export default function LessonContent({ content }: LessonContentProps) {
         }
 
         .prose hr {
-          margin: 2rem 0;
+          margin: 2.5rem 0;
           border: none;
-          border-top: 2px solid #e5e7eb;
+          border-top: 1px solid #e5e7eb;
         }
 
         .dark .prose hr {
           border-top-color: #374151;
+        }
+
+        .prose > *:first-child {
+          margin-top: 0;
         }
       `}</style>
     </div>
