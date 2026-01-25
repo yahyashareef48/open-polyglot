@@ -1,12 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { Menu, X, Github, ExternalLink, Home } from "lucide-react";
 
 export function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isOnSubdomain, setIsOnSubdomain] = useState(false);
   const [mainDomainUrl, setMainDomainUrl] = useState("");
+  const pathname = usePathname();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -50,6 +52,14 @@ export function Navigation() {
     }
     return `#${section}`;
   };
+
+  // Hide navigation on lesson pages (e.g., /a1/intro/03-useful-resources) only on language subdomains
+  const isLessonPage = isOnSubdomain && /^\/[^/]+\/[^/]+\/[^/]+$/.test(pathname);
+
+  // Don't render navigation on lesson pages
+  if (isLessonPage) {
+    return null;
+  }
 
   return (
     <nav className="fixed top-0 w-full z-50 backdrop-blur-md bg-background/80 border-b border-border">
