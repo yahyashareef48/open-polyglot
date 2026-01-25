@@ -117,7 +117,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
     }));
 
     return (
-      <div className="flex min-h-screen bg-gray-50 dark:bg-gray-950">
+      <div className="flex h-screen overflow-hidden bg-gray-50 dark:bg-gray-950">
         {/* Track last opened lesson */}
         <LastOpenedTracker userId={userId} languageCode={lang} levelId={level} sectionId={section} lessonId={lesson} />
 
@@ -137,7 +137,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
         />
 
         {/* Main content area */}
-        <main className="flex-1 min-w-0">
+        <main className="flex-1 min-w-0 overflow-y-auto lesson-page-scroll">
           {/* Compact header */}
           <header className={`sticky top-0 z-30 bg-gradient-to-r ${theme.accent} ${theme.accentDark} shadow-lg`}>
             <div className="px-6 lg:px-12 py-4">

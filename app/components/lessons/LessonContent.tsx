@@ -98,6 +98,15 @@ export default function LessonContent({ content }: LessonContentProps) {
       })}
 
       <style jsx global>{`
+        /* Hide scrollbar for the lesson page */
+        .lesson-page-scroll {
+          scrollbar-width: none; /* Firefox */
+          -ms-overflow-style: none; /* IE and Edge */
+        }
+        .lesson-page-scroll::-webkit-scrollbar {
+          display: none; /* Chrome, Safari, Opera */
+        }
+
         .lesson-content {
           line-height: 1.8;
         }

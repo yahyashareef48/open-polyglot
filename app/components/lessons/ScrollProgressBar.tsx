@@ -1,30 +1,46 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 export default function ScrollProgressBar() {
   const [progress, setProgress] = useState(0);
+  const [scrollContainer, setScrollContainer] = useState<Element | null>(null);
 
+  // Find the scroll container after mount
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const scrollPercent = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-      setProgress(scrollPercent);
-    };
+    // Use requestAnimationFrame to ensure DOM is ready
+    const frame = requestAnimationFrame(() => {
+      const container = document.querySelector(".lesson-page-scroll");
+      setScrollContainer(container);
+    });
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => cancelAnimationFrame(frame);
+  }, []);
+
+  const handleScroll = useCallback(() => {
+    if (scrollContainer) {
+      const scrollTop = scrollContainer.scrollTop;
+      const scrollHeight = scrollContainer.scrollHeight - scrollContainer.clientHeight;
+      const scrollPercent = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+      setProgress(scrollPercent);
+    }
+  }, [scrollContainer]);
+
+  // Attach scroll listener when container is found
+  useEffect(() => {
+    if (!scrollContainer) return;
+
+    scrollContainer.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll(); // Initial calculation
 
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    return () => {
+      scrollContainer.removeEventListener("scroll", handleScroll);
+    };
+  }, [scrollContainer, handleScroll]);
 
   return (
     <div className="h-1 bg-black/20">
-      <div
-        className="h-full bg-white/50 transition-all duration-150"
-        style={{ width: `${progress}%` }}
-      />
+      <div className="h-full bg-white/50 transition-all duration-150" style={{ width: `${progress}%` }} />
     </div>
   );
 }
