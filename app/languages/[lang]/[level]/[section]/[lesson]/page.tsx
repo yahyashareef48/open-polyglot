@@ -1,10 +1,5 @@
 import Link from "next/link";
-import {
-  getLessonContent,
-  getNavigationInfo,
-  getSectionMetadata,
-  getSectionsForLevel,
-} from "@/lib/content";
+import { getLessonContent, getNavigationInfo, getSectionMetadata, getSectionsForLevel } from "@/lib/content";
 import LessonContent from "@/app/components/lessons/LessonContent";
 import LessonNavigation from "@/app/components/lessons/LessonNavigation";
 import MarkCompleteButton from "@/app/components/lessons/MarkCompleteButton";
@@ -33,8 +28,7 @@ const languageThemes: Record<
 > = {
   german: {
     gradient: "from-black via-[33%] via-red-600 via-[66%] to-amber-500",
-    darkGradient:
-      "dark:from-gray-900 dark:via-[33%] dark:via-red-900 dark:via-[66%] dark:to-amber-900",
+    darkGradient: "dark:from-gray-900 dark:via-[33%] dark:via-red-900 dark:via-[66%] dark:to-amber-900",
     accent: "from-red-600 to-amber-500",
     accentDark: "dark:from-red-800 dark:to-amber-700",
   },
@@ -53,10 +47,7 @@ const languageThemes: Record<
 };
 
 // Lesson type icon and color mapping
-const lessonTypeConfig: Record<
-  string,
-  { icon: string; bgColor: string; textColor: string }
-> = {
+const lessonTypeConfig: Record<string, { icon: string; bgColor: string; textColor: string }> = {
   informational: {
     icon: "M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
     bgColor: "bg-blue-100 dark:bg-blue-900/30",
@@ -103,8 +94,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
 
     // Find lesson info from section metadata
     const lessonInfo = sectionMeta.lessons.find((l) => l.id === lesson);
-    const currentLessonIndex =
-      sectionMeta.lessons.findIndex((l) => l.id === lesson) + 1;
+    const currentLessonIndex = sectionMeta.lessons.findIndex((l) => l.id === lesson) + 1;
 
     // Get theme for this language or fallback to default
     const theme = languageThemes[lang] || {
@@ -126,13 +116,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
     return (
       <div className="flex min-h-screen bg-gray-50 dark:bg-gray-950">
         {/* Track last opened lesson */}
-        <LastOpenedTracker
-          userId={userId}
-          languageCode={lang}
-          levelId={level}
-          sectionId={section}
-          lessonId={lesson}
-        />
+        <LastOpenedTracker userId={userId} languageCode={lang} levelId={level} sectionId={section} lessonId={lesson} />
 
         {/* Load lesson content into audio player */}
         <LessonAudioLoader lessonContent={lessonContent} />
@@ -150,9 +134,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
         {/* Main content area */}
         <main className="flex-1 min-w-0">
           {/* Compact header */}
-          <header
-            className={`sticky top-0 z-30 bg-gradient-to-r ${theme.accent} ${theme.accentDark} shadow-lg`}
-          >
+          <header className={`sticky top-0 z-30 bg-gradient-to-r ${theme.accent} ${theme.accentDark} shadow-lg`}>
             <div className="px-6 lg:px-12 py-4">
               <div className="flex items-center justify-between gap-4">
                 {/* Left side - breadcrumb and title */}
@@ -160,28 +142,14 @@ export default async function LessonPage({ params }: LessonPageProps) {
                   {/* Breadcrumb */}
                   <div className="flex items-center gap-2 text-white/70 text-sm mb-1">
                     <span>{sectionMeta.title}</span>
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 5l7 7-7 7"
-                      />
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
-                    <span className="text-white/90">
-                      Lesson {currentLessonIndex}
-                    </span>
+                    <span className="text-white/90">Lesson {currentLessonIndex}</span>
                   </div>
 
                   {/* Title */}
-                  <h1 className="text-xl lg:text-2xl font-bold text-white truncate">
-                    {lessonContent.title}
-                  </h1>
+                  <h1 className="text-xl lg:text-2xl font-bold text-white truncate">{lessonContent.title}</h1>
                 </div>
 
                 {/* Right side - metadata badges */}
@@ -189,47 +157,19 @@ export default async function LessonPage({ params }: LessonPageProps) {
                   {lessonInfo && (
                     <>
                       {/* Type badge */}
-                      <div
-                        className={`hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full ${typeConfig.bgColor}`}
-                      >
-                        <svg
-                          className={`w-4 h-4 ${typeConfig.textColor}`}
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d={typeConfig.icon}
-                          />
+                      <div className={`hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full ${typeConfig.bgColor}`}>
+                        <svg className={`w-4 h-4 ${typeConfig.textColor}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={typeConfig.icon} />
                         </svg>
-                        <span
-                          className={`text-sm font-medium capitalize ${typeConfig.textColor}`}
-                        >
-                          {lessonInfo.type}
-                        </span>
+                        <span className={`text-sm font-medium capitalize ${typeConfig.textColor}`}>{lessonInfo.type}</span>
                       </div>
 
                       {/* Duration badge */}
                       <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full">
-                        <svg
-                          className="w-4 h-4 text-white"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
+                        <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        <span className="text-sm font-medium text-white">
-                          {lessonInfo.estimatedMinutes} min
-                        </span>
+                        <span className="text-sm font-medium text-white">{lessonInfo.estimatedMinutes} min</span>
                       </div>
                     </>
                   )}
@@ -242,9 +182,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
               <div
                 className="h-full bg-white/50 transition-all duration-500"
                 style={{
-                  width: `${
-                    (currentLessonIndex / sectionMeta.lessons.length) * 100
-                  }%`,
+                  width: `${(currentLessonIndex / sectionMeta.lessons.length) * 100}%`,
                 }}
               />
             </div>
@@ -264,13 +202,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
                 <div className="border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50 p-6 md:p-8">
                   {/* Mark complete button */}
                   <div className="mb-6">
-                    <MarkCompleteButton
-                      userId={userId}
-                      languageCode={lang}
-                      levelId={level}
-                      sectionId={section}
-                      lessonId={lesson}
-                    />
+                    <MarkCompleteButton userId={userId} languageCode={lang} levelId={level} sectionId={section} lessonId={lesson} />
                   </div>
 
                   {/* Navigation */}
@@ -283,29 +215,15 @@ export default async function LessonPage({ params }: LessonPageProps) {
                 <div className="mt-8 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl p-6 md:p-8 border border-blue-200 dark:border-blue-800">
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center flex-shrink-0">
-                      <svg
-                        className="w-6 h-6 text-white"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M13 10V3L4 14h7v7l9-11h-7z"
-                        />
+                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                       </svg>
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                        Practice & Reinforce
-                      </h3>
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Practice & Reinforce</h3>
                       <p className="text-gray-600 dark:text-gray-400 mb-4">
-                        {lessonInfo.hasQuiz &&
-                          "Test your understanding with a quiz. "}
-                        {lessonInfo.hasExercises &&
-                          "Complete exercises to solidify your learning."}
+                        {lessonInfo.hasQuiz && "Test your understanding with a quiz. "}
+                        {lessonInfo.hasExercises && "Complete exercises to solidify your learning."}
                       </p>
                       <div className="flex flex-wrap gap-3">
                         {lessonInfo.hasQuiz && (
@@ -313,12 +231,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
                             disabled
                             className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white rounded-xl opacity-60 cursor-not-allowed font-medium"
                           >
-                            <svg
-                              className="w-5 h-5"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
@@ -334,12 +247,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
                             disabled
                             className="inline-flex items-center gap-2 px-5 py-2.5 bg-purple-600 text-white rounded-xl opacity-60 cursor-not-allowed font-medium"
                           >
-                            <svg
-                              className="w-5 h-5"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
@@ -366,12 +274,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center max-w-md mx-auto px-4">
           <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-            <svg
-              className="w-10 h-10 text-red-600 dark:text-red-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+            <svg className="w-10 h-10 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -380,29 +283,14 @@ export default async function LessonPage({ params }: LessonPageProps) {
               />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-            Lesson Not Found
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400 mb-6">
-            The lesson you&apos;re looking for doesn&apos;t exist or is not yet
-            available.
-          </p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Lesson Not Found</h1>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">The lesson you&apos;re looking for doesn&apos;t exist or is not yet available.</p>
           <Link
             href={`/${level}`}
             className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium"
           >
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
             Back to Level
           </Link>
