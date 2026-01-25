@@ -188,13 +188,11 @@ export default async function LessonPage({ params }: LessonPageProps) {
 
           {/* Scrollable content */}
           <div className="px-6 lg:px-12 py-8 lg:py-12">
-            <div className="max-w-4xl mx-auto">
+            <div className="max-w-7xl mx-auto max-w-">
               {/* Lesson content card */}
-              <article className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
+              <article>
                 {/* Content */}
-                <div className="p-6 md:p-10 lg:p-12">
-                  <LessonContent content={lessonContent} />
-                </div>
+                <LessonContent content={lessonContent} />
 
                 {/* Footer with mark complete and navigation */}
                 <div className="border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50 p-6 md:p-8">
