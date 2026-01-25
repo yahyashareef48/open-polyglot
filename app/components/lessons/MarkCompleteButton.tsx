@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { markLessonComplete, getLessonProgress } from '@/lib/progress';
+import { useState, useEffect } from "react";
+import { markLessonComplete, getLessonProgress } from "@/lib/progress";
 
 interface MarkCompleteButtonProps {
   userId: string;
@@ -11,13 +11,7 @@ interface MarkCompleteButtonProps {
   lessonId: string;
 }
 
-export default function MarkCompleteButton({
-  userId,
-  languageCode,
-  levelId,
-  sectionId,
-  lessonId,
-}: MarkCompleteButtonProps) {
+export default function MarkCompleteButton({ userId, languageCode, levelId, sectionId, lessonId }: MarkCompleteButtonProps) {
   const [isCompleting, setIsCompleting] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -40,8 +34,8 @@ export default function MarkCompleteButton({
         window.location.reload();
       }, 1000);
     } catch (error) {
-      console.error('Failed to mark lesson complete:', error);
-      alert('Failed to mark lesson as complete. Please try again.');
+      console.error("Failed to mark lesson complete:", error);
+      alert("Failed to mark lesson as complete. Please try again.");
     } finally {
       setIsCompleting(false);
     }
@@ -62,7 +56,7 @@ export default function MarkCompleteButton({
     <button
       onClick={handleMarkComplete}
       disabled={isCompleting}
-      className="w-full py-4 px-6 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold rounded-lg hover:from-emerald-700 hover:to-teal-700 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg"
+      className="w-full py-4 px-6 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold rounded-lg hover:from-emerald-700 hover:to-teal-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg"
     >
       {isCompleting ? (
         <span className="flex items-center justify-center gap-2">

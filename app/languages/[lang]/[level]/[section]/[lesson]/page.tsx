@@ -194,16 +194,8 @@ export default async function LessonPage({ params }: LessonPageProps) {
                 {/* Content */}
                 <LessonContent content={lessonContent} />
 
-                {/* Footer with mark complete and navigation */}
-                <div className="border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50 p-6 md:p-8">
-                  {/* Mark complete button */}
-                  <div className="mb-6">
-                    <MarkCompleteButton userId={userId} languageCode={lang} levelId={level} sectionId={section} lessonId={lesson} />
-                  </div>
-
-                  {/* Navigation */}
-                  <LessonNavigation navigationInfo={navigationInfo} />
-                </div>
+                {/* Footer with mark complete button */}
+                <MarkCompleteButton userId={userId} languageCode={lang} levelId={level} sectionId={section} lessonId={lesson} />
               </article>
 
               {/* Additional practice section */}
