@@ -3,11 +3,12 @@
  * Uses IndexedDB with localStorage fallback
  */
 
-import { User, Lesson, Session } from '@/app/types/content';
-import { EventEmitter } from 'events';
+import { User, Lesson, Session } from "@/app/types/content";
+import { EVENTS } from "@/app/types/events";
+import { EventEmitter } from "events";
 
 // Event emitter for progress changes
-export const progressEvents = new EventEmitter();
+export const eventBus = new EventEmitter();
 
 export type ProgressEventData = {
   userId: string;
@@ -17,23 +18,18 @@ export type ProgressEventData = {
   lessonId: string;
 };
 
-export const PROGRESS_EVENTS = {
-  LESSON_COMPLETED: 'lesson:completed',
-  LESSON_INCOMPLETED: 'lesson:incompleted',
-} as const;
-
-const DB_NAME = 'OpenPolyglotDB';
+const DB_NAME = "OpenPolyglotDB";
 const DB_VERSION = 3;
 const STORES = {
-  users: 'users',
-  lessons: 'lessons',
-  sessions: 'sessions',
+  users: "users",
+  lessons: "lessons",
+  sessions: "sessions",
 } as const;
 
 let dbInstance: IDBDatabase | null = null;
 
 function isServer(): boolean {
-  return typeof window === 'undefined';
+  return typeof window === "undefined";
 }
 
 function getDB(): Promise<IDBDatabase> {
@@ -41,7 +37,7 @@ function getDB(): Promise<IDBDatabase> {
 
   return new Promise((resolve, reject) => {
     if (isServer() || !window.indexedDB) {
-      reject(new Error('IndexedDB not available'));
+      reject(new Error("IndexedDB not available"));
       return;
     }
 
@@ -57,15 +53,15 @@ function getDB(): Promise<IDBDatabase> {
       const db = (event.target as IDBOpenDBRequest).result;
 
       if (!db.objectStoreNames.contains(STORES.users)) {
-        db.createObjectStore(STORES.users, { keyPath: 'userId' });
+        db.createObjectStore(STORES.users, { keyPath: "userId" });
       }
       if (!db.objectStoreNames.contains(STORES.lessons)) {
-        const store = db.createObjectStore(STORES.lessons, { keyPath: 'id' });
-        store.createIndex('userId', 'userId', { unique: false });
+        const store = db.createObjectStore(STORES.lessons, { keyPath: "id" });
+        store.createIndex("userId", "userId", { unique: false });
       }
       if (!db.objectStoreNames.contains(STORES.sessions)) {
-        const store = db.createObjectStore(STORES.sessions, { keyPath: 'id' });
-        store.createIndex('userId', 'userId', { unique: false });
+        const store = db.createObjectStore(STORES.sessions, { keyPath: "id" });
+        store.createIndex("userId", "userId", { unique: false });
       }
     };
   });
@@ -74,7 +70,7 @@ function getDB(): Promise<IDBDatabase> {
 async function dbGet<T>(store: string, key: string): Promise<T | null> {
   const db = await getDB();
   return new Promise((resolve, reject) => {
-    const tx = db.transaction(store, 'readonly');
+    const tx = db.transaction(store, "readonly");
     const req = tx.objectStore(store).get(key);
     req.onsuccess = () => resolve(req.result || null);
     req.onerror = () => reject(req.error);
@@ -84,7 +80,7 @@ async function dbGet<T>(store: string, key: string): Promise<T | null> {
 async function dbPut<T>(store: string, data: T): Promise<void> {
   const db = await getDB();
   return new Promise((resolve, reject) => {
-    const tx = db.transaction(store, 'readwrite');
+    const tx = db.transaction(store, "readwrite");
     const req = tx.objectStore(store).put(data);
     req.onsuccess = () => resolve();
     req.onerror = () => reject(req.error);
@@ -97,7 +93,7 @@ async function dbPut<T>(store: string, data: T): Promise<void> {
 
 async function getOrCreateUser(userId: string): Promise<User> {
   if (isServer()) {
-    return { userId, createdAt: '', lastActive: '', streak: 0, totalTimeSpent: 0 };
+    return { userId, createdAt: "", lastActive: "", streak: 0, totalTimeSpent: 0 };
   }
 
   try {
@@ -109,7 +105,7 @@ async function getOrCreateUser(userId: string): Promise<User> {
     }
     return user;
   } catch {
-    return { userId, createdAt: '', lastActive: '', streak: 0, totalTimeSpent: 0 };
+    return { userId, createdAt: "", lastActive: "", streak: 0, totalTimeSpent: 0 };
   }
 }
 
@@ -134,13 +130,7 @@ function makeLessonKey(userId: string, lang: string, level: string, section: str
   return `${userId}:${lang}:${level}:${section}:${lesson}`;
 }
 
-async function getLessonRecord(
-  userId: string,
-  lang: string,
-  level: string,
-  section: string,
-  lesson: string
-): Promise<Lesson | null> {
+async function getLessonRecord(userId: string, lang: string, level: string, section: string, lesson: string): Promise<Lesson | null> {
   if (isServer()) return null;
 
   try {
@@ -154,13 +144,7 @@ async function getLessonRecord(
 // Public API
 // ============================================================================
 
-export async function markLessonComplete(
-  userId: string,
-  languageCode: string,
-  levelId: string,
-  sectionId: string,
-  lessonId: string
-): Promise<void> {
+export async function markLessonComplete(userId: string, languageCode: string, levelId: string, sectionId: string, lessonId: string): Promise<void> {
   if (isServer()) return;
 
   try {
@@ -182,7 +166,7 @@ export async function markLessonComplete(
     await dbPut(STORES.users, user);
 
     // Emit event for lesson completion
-    progressEvents.emit(PROGRESS_EVENTS.LESSON_COMPLETED, {
+    eventBus.emit(EVENTS.LESSON_COMPLETED, {
       userId,
       languageCode,
       levelId,
@@ -190,7 +174,7 @@ export async function markLessonComplete(
       lessonId,
     } as ProgressEventData);
   } catch (error) {
-    console.warn('Failed to mark lesson complete:', error);
+    console.warn("Failed to mark lesson complete:", error);
   }
 }
 
@@ -199,7 +183,7 @@ export async function markLessonIncomplete(
   languageCode: string,
   levelId: string,
   sectionId: string,
-  lessonId: string
+  lessonId: string,
 ): Promise<void> {
   if (isServer()) return;
 
@@ -208,14 +192,14 @@ export async function markLessonIncomplete(
     const key = makeLessonKey(userId, languageCode, levelId, sectionId, lessonId);
 
     await new Promise<void>((resolve, reject) => {
-      const tx = db.transaction(STORES.lessons, 'readwrite');
+      const tx = db.transaction(STORES.lessons, "readwrite");
       const req = tx.objectStore(STORES.lessons).delete(key);
       req.onsuccess = () => resolve();
       req.onerror = () => reject(req.error);
     });
 
     // Emit event for lesson incompletion
-    progressEvents.emit(PROGRESS_EVENTS.LESSON_INCOMPLETED, {
+    eventBus.emit(EVENTS.LESSON_INCOMPLETED, {
       userId,
       languageCode,
       levelId,
@@ -223,7 +207,7 @@ export async function markLessonIncomplete(
       lessonId,
     } as ProgressEventData);
   } catch (error) {
-    console.warn('Failed to mark lesson incomplete:', error);
+    console.warn("Failed to mark lesson incomplete:", error);
   }
 }
 
@@ -232,7 +216,7 @@ export async function getLessonProgress(
   languageCode: string,
   levelId: string,
   sectionId: string,
-  lessonId: string
+  lessonId: string,
 ): Promise<{ completed: boolean } | null> {
   if (isServer()) return null;
 
@@ -250,8 +234,8 @@ async function getAllLessonsForUser(userId: string): Promise<Lesson[]> {
   try {
     const db = await getDB();
     return new Promise((resolve, reject) => {
-      const tx = db.transaction(STORES.lessons, 'readonly');
-      const index = tx.objectStore(STORES.lessons).index('userId');
+      const tx = db.transaction(STORES.lessons, "readonly");
+      const index = tx.objectStore(STORES.lessons).index("userId");
       const req = index.getAll(userId);
       req.onsuccess = () => resolve(req.result || []);
       req.onerror = () => reject(req.error);
@@ -266,14 +250,14 @@ export async function getSectionProgress(
   languageCode: string,
   levelId: string,
   sectionId: string,
-  totalLessons: number
+  totalLessons: number,
 ): Promise<{ completedLessons: number; percentComplete: number }> {
   if (isServer()) return { completedLessons: 0, percentComplete: 0 };
 
   try {
     const allLessons = await getAllLessonsForUser(userId);
     const sectionLessons = allLessons.filter(
-      (l) => l.languageCode === languageCode && l.levelId === levelId && l.sectionId === sectionId && l.completed
+      (l) => l.languageCode === languageCode && l.levelId === levelId && l.sectionId === sectionId && l.completed,
     );
 
     return {
@@ -285,19 +269,12 @@ export async function getSectionProgress(
   }
 }
 
-export async function getCompletionPercentage(
-  userId: string,
-  languageCode: string,
-  levelId: string,
-  totalLessons: number
-): Promise<number> {
+export async function getCompletionPercentage(userId: string, languageCode: string, levelId: string, totalLessons: number): Promise<number> {
   if (isServer()) return 0;
 
   try {
     const allLessons = await getAllLessonsForUser(userId);
-    const levelLessons = allLessons.filter(
-      (l) => l.languageCode === languageCode && l.levelId === levelId && l.completed
-    );
+    const levelLessons = allLessons.filter((l) => l.languageCode === languageCode && l.levelId === levelId && l.completed);
 
     return totalLessons > 0 ? (levelLessons.length / totalLessons) * 100 : 0;
   } catch {
@@ -316,12 +293,7 @@ export async function getStreak(userId: string): Promise<number> {
   }
 }
 
-export async function logSession(
-  userId: string,
-  languageCode: string,
-  duration: number,
-  activityType: Session['activityType']
-): Promise<void> {
+export async function logSession(userId: string, languageCode: string, duration: number, activityType: Session["activityType"]): Promise<void> {
   if (isServer()) return;
 
   try {
@@ -340,7 +312,7 @@ export async function logSession(
     user.totalTimeSpent += duration;
     await dbPut(STORES.users, user);
   } catch (error) {
-    console.warn('Failed to log session:', error);
+    console.warn("Failed to log session:", error);
   }
 }
 
@@ -350,13 +322,13 @@ export async function resetProgress(userId: string): Promise<void> {
   try {
     const db = await getDB();
     const storeNames = [STORES.users, STORES.lessons, STORES.sessions];
-    const tx = db.transaction(storeNames, 'readwrite');
+    const tx = db.transaction(storeNames, "readwrite");
 
     tx.objectStore(STORES.users).delete(userId);
 
     for (const storeName of [STORES.lessons, STORES.sessions]) {
       const store = tx.objectStore(storeName);
-      const index = store.index('userId');
+      const index = store.index("userId");
       const req = index.openCursor(IDBKeyRange.only(userId));
       req.onsuccess = () => {
         const cursor = req.result;
@@ -367,7 +339,7 @@ export async function resetProgress(userId: string): Promise<void> {
       };
     }
   } catch (error) {
-    console.warn('Failed to reset progress:', error);
+    console.warn("Failed to reset progress:", error);
   }
 }
 
@@ -388,7 +360,7 @@ export async function saveLastOpenedLesson(
   languageCode: string,
   levelId: string,
   sectionId: string,
-  lessonId: string
+  lessonId: string,
 ): Promise<void> {
   if (isServer()) return;
 
@@ -400,7 +372,7 @@ export async function saveLastOpenedLesson(
     user.lastOpened[languageCode] = `${levelId}:${sectionId}:${lessonId}`;
     await dbPut(STORES.users, user);
   } catch (error) {
-    console.warn('Failed to save last opened lesson:', error);
+    console.warn("Failed to save last opened lesson:", error);
   }
 }
 
@@ -412,7 +384,7 @@ export async function saveLastOpenedLesson(
  */
 export async function getLastOpenedLesson(
   userId: string,
-  languageCode: string
+  languageCode: string,
 ): Promise<{ levelId: string; sectionId: string; lessonId: string } | null> {
   if (isServer()) return null;
 
@@ -422,7 +394,7 @@ export async function getLastOpenedLesson(
       return null;
     }
 
-    const [levelId, sectionId, lessonId] = user.lastOpened[languageCode].split(':');
+    const [levelId, sectionId, lessonId] = user.lastOpened[languageCode].split(":");
     if (!levelId || !sectionId || !lessonId) {
       return null;
     }
