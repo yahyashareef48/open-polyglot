@@ -33,10 +33,6 @@ export default function LessonCompletionToggle({ userId, languageCode, levelId, 
         await markLessonComplete(userId, languageCode, levelId, sectionId, lessonId);
         setIsCompleted(true);
       }
-
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
     } catch (error) {
       console.error("Failed to update lesson status:", error);
       alert("Failed to update lesson status. Please try again.");
