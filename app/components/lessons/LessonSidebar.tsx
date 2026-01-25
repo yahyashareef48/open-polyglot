@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { SectionMetadata, LessonInfo } from "@/app/types/content";
 import { getLessonProgress } from "@/lib/progress";
+import ProgressCircle from "./ProgressCircle";
 
 interface SectionWithMeta extends SectionMetadata {
   url: string;
@@ -17,13 +18,15 @@ interface LessonSidebarProps {
   levelId: string;
   languageCode: string;
   userId: string;
+  languageName: string;
+  levelName: string;
 }
 
 interface CompletionState {
   [lessonId: string]: boolean;
 }
 
-export default function LessonSidebar({ sections, currentSectionId, currentLessonId, levelId, languageCode, userId }: LessonSidebarProps) {
+export default function LessonSidebar({ sections, currentSectionId, currentLessonId, levelId, languageCode, userId, languageName, levelName }: LessonSidebarProps) {
   const pathname = usePathname();
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set([currentSectionId]));
   const [completionState, setCompletionState] = useState<CompletionState>({});
@@ -84,7 +87,15 @@ export default function LessonSidebar({ sections, currentSectionId, currentLesso
           </svg>
           <span>Back to Level</span>
         </Link>
-        <h2 className="mt-3 text-lg font-bold text-gray-900 dark:text-white">Course Content</h2>
+        <h2 className="mt-3 text-lg font-bold text-gray-900 dark:text-white">{languageName} {levelName}</h2>
+        <div className="mt-4 flex justify-center">
+          <ProgressCircle
+            userId={userId}
+            languageCode={languageCode}
+            levelId={levelId}
+            totalLessons={sections.reduce((acc, section) => acc + section.lessons.length, 0)}
+          />
+        </div>
       </div>
 
       {/* Sections list */}

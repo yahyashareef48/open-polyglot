@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getLessonContent, getNavigationInfo, getSectionMetadata, getSectionsForLevel } from "@/lib/content";
+import { getLessonContent, getNavigationInfo, getSectionMetadata, getSectionsForLevel, getLanguageMetadata, getLevelMetadata } from "@/lib/content";
 import LessonContent from "@/app/components/lessons/LessonContent";
 import LessonNavigation from "@/app/components/lessons/LessonNavigation";
 import MarkCompleteButton from "@/app/components/lessons/MarkCompleteButton";
@@ -88,6 +88,8 @@ export default async function LessonPage({ params }: LessonPageProps) {
     const navigationInfo = await getNavigationInfo(lang, level, section, lesson);
     const sectionMeta = await getSectionMetadata(lang, level, section);
     const allSections = await getSectionsForLevel(lang, level);
+    const languageMeta = await getLanguageMetadata(lang);
+    const levelMeta = await getLevelMetadata(lang, level);
 
     // TODO: Get actual user ID from auth context
     const userId = "guest";
@@ -129,6 +131,8 @@ export default async function LessonPage({ params }: LessonPageProps) {
           levelId={level}
           languageCode={lang}
           userId={userId}
+          languageName={languageMeta.name}
+          levelName={levelMeta.name}
         />
 
         {/* Main content area */}
