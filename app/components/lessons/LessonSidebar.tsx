@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { SectionMetadata, LessonInfo } from "@/app/types/content";
-import { getLessonProgress } from "@/lib/progress";
+import { getLessonProgress, eventBus, ProgressEventData } from "@/lib/progress";
+import { EVENTS } from "@/app/types/events";
 import ProgressBar from "./ProgressBar";
 
 interface SectionWithMeta extends SectionMetadata {
@@ -38,19 +39,49 @@ export default function LessonSidebar({ sections, levelId, languageCode, userId,
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   // Load completion states for all lessons
-  useEffect(() => {
-    const loadCompletionStates = async () => {
-      const states: CompletionState = {};
-      for (const section of sections) {
-        for (const lesson of section.lessons) {
-          const progress = await getLessonProgress(userId, languageCode, levelId, section.id, lesson.id);
-          states[`${section.id}:${lesson.id}`] = progress?.completed ?? false;
-        }
+  const loadCompletionStates = useCallback(async () => {
+    const states: CompletionState = {};
+    for (const section of sections) {
+      for (const lesson of section.lessons) {
+        const progress = await getLessonProgress(userId, languageCode, levelId, section.id, lesson.id);
+        states[`${section.id}:${lesson.id}`] = progress?.completed ?? false;
       }
-      setCompletionState(states);
-    };
-    loadCompletionStates();
+    }
+    setCompletionState(states);
   }, [sections, userId, languageCode, levelId]);
+
+  useEffect(() => {
+    loadCompletionStates();
+  }, [loadCompletionStates]);
+
+  // Listen for progress events and update completion states
+  useEffect(() => {
+    const handleLessonCompleted = (data: ProgressEventData) => {
+      if (data.userId === userId && data.languageCode === languageCode && data.levelId === levelId) {
+        setCompletionState((prev) => ({
+          ...prev,
+          [`${data.sectionId}:${data.lessonId}`]: true,
+        }));
+      }
+    };
+
+    const handleLessonIncompleted = (data: ProgressEventData) => {
+      if (data.userId === userId && data.languageCode === languageCode && data.levelId === levelId) {
+        setCompletionState((prev) => ({
+          ...prev,
+          [`${data.sectionId}:${data.lessonId}`]: false,
+        }));
+      }
+    };
+
+    eventBus.on(EVENTS.LESSON_COMPLETED, handleLessonCompleted);
+    eventBus.on(EVENTS.LESSON_INCOMPLETED, handleLessonIncompleted);
+
+    return () => {
+      eventBus.off(EVENTS.LESSON_COMPLETED, handleLessonCompleted);
+      eventBus.off(EVENTS.LESSON_INCOMPLETED, handleLessonIncompleted);
+    };
+  }, [userId, languageCode, levelId]);
 
   // Expand current section when navigating
   useEffect(() => {
