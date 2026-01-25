@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import { Navigation } from "./components/navigation";
+import { MainContent } from "./components/MainContent";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -97,7 +98,7 @@ export default function RootLayout({
       <body className={`${inter.variable} antialiased`}>
         <Providers>
           <Navigation />
-          <main className="pt-16">{children}</main>
+          <MainContent>{children}</MainContent>
         </Providers>
       </body>
     </html>
