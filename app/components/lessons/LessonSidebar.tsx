@@ -23,18 +23,9 @@ interface CompletionState {
   [lessonId: string]: boolean;
 }
 
-export default function LessonSidebar({
-  sections,
-  currentSectionId,
-  currentLessonId,
-  levelId,
-  languageCode,
-  userId,
-}: LessonSidebarProps) {
+export default function LessonSidebar({ sections, currentSectionId, currentLessonId, levelId, languageCode, userId }: LessonSidebarProps) {
   const pathname = usePathname();
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(
-    new Set([currentSectionId])
-  );
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set([currentSectionId]));
   const [completionState, setCompletionState] = useState<CompletionState>({});
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
@@ -44,13 +35,7 @@ export default function LessonSidebar({
       const states: CompletionState = {};
       for (const section of sections) {
         for (const lesson of section.lessons) {
-          const progress = await getLessonProgress(
-            userId,
-            languageCode,
-            levelId,
-            section.id,
-            lesson.id
-          );
+          const progress = await getLessonProgress(userId, languageCode, levelId, section.id, lesson.id);
           states[`${section.id}:${lesson.id}`] = progress?.completed ?? false;
         }
       }
@@ -82,9 +67,7 @@ export default function LessonSidebar({
   };
 
   const getSectionProgress = (section: SectionMetadata) => {
-    const completed = section.lessons.filter((lesson) =>
-      isLessonCompleted(section.id, lesson.id)
-    ).length;
+    const completed = section.lessons.filter((lesson) => isLessonCompleted(section.id, lesson.id)).length;
     return { completed, total: section.lessons.length };
   };
 
@@ -93,27 +76,15 @@ export default function LessonSidebar({
       {/* Header */}
       <div className="p-4 border-b border-gray-200 dark:border-gray-700">
         <Link
-          href={`/${levelId}`}
+          href={`/`}
           className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
         >
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 19l-7-7 7-7"
-            />
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
           <span>Back to Level</span>
         </Link>
-        <h2 className="mt-3 text-lg font-bold text-gray-900 dark:text-white">
-          Course Content
-        </h2>
+        <h2 className="mt-3 text-lg font-bold text-gray-900 dark:text-white">Course Content</h2>
       </div>
 
       {/* Sections list */}
@@ -137,19 +108,12 @@ export default function LessonSidebar({
                 >
                   {/* Expand/collapse icon */}
                   <svg
-                    className={`w-4 h-4 flex-shrink-0 transition-transform duration-200 ${
-                      isExpanded ? "rotate-90" : ""
-                    }`}
+                    className={`w-4 h-4 flex-shrink-0 transition-transform duration-200 ${isExpanded ? "rotate-90" : ""}`}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
 
                   {/* Section number badge */}
@@ -158,23 +122,13 @@ export default function LessonSidebar({
                       progress.completed === progress.total && progress.total > 0
                         ? "bg-emerald-500 text-white"
                         : isCurrentSection
-                        ? "bg-blue-600 text-white"
-                        : "bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400"
+                          ? "bg-blue-600 text-white"
+                          : "bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400"
                     }`}
                   >
                     {progress.completed === progress.total && progress.total > 0 ? (
-                      <svg
-                        className="w-3 h-3"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={3}
-                          d="M5 13l4 4L19 7"
-                        />
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                       </svg>
                     ) : (
                       sectionIndex + 1
@@ -183,9 +137,7 @@ export default function LessonSidebar({
 
                   {/* Section title and progress */}
                   <div className="flex-1 min-w-0">
-                    <div className="font-medium text-sm truncate">
-                      {section.title}
-                    </div>
+                    <div className="font-medium text-sm truncate">{section.title}</div>
                     <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                       {progress.completed}/{progress.total} completed
                     </div>
@@ -196,9 +148,7 @@ export default function LessonSidebar({
                 {isExpanded && (
                   <div className="ml-4 mt-1 space-y-0.5 border-l-2 border-gray-200 dark:border-gray-700">
                     {section.lessons.map((lesson, lessonIndex) => {
-                      const isCurrentLesson =
-                        section.id === currentSectionId &&
-                        lesson.id === currentLessonId;
+                      const isCurrentLesson = section.id === currentSectionId && lesson.id === currentLessonId;
                       const isCompleted = isLessonCompleted(section.id, lesson.id);
                       const lessonUrl = `/${levelId}/${section.id}/${lesson.id}`;
 
@@ -210,8 +160,8 @@ export default function LessonSidebar({
                             isCurrentLesson
                               ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 font-medium"
                               : isCompleted
-                              ? "text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
-                              : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                                ? "text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+                                : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                           }`}
                         >
                           {/* Lesson status indicator */}
@@ -220,23 +170,13 @@ export default function LessonSidebar({
                               isCurrentLesson
                                 ? "bg-blue-600 text-white"
                                 : isCompleted
-                                ? "bg-emerald-500 text-white"
-                                : "border-2 border-gray-300 dark:border-gray-600"
+                                  ? "bg-emerald-500 text-white"
+                                  : "border-2 border-gray-300 dark:border-gray-600"
                             }`}
                           >
                             {isCompleted ? (
-                              <svg
-                                className="w-3 h-3"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={3}
-                                  d="M5 13l4 4L19 7"
-                                />
+                              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                               </svg>
                             ) : isCurrentLesson ? (
                               <span className="w-1.5 h-1.5 bg-white rounded-full" />
@@ -244,9 +184,7 @@ export default function LessonSidebar({
                           </span>
 
                           {/* Lesson title */}
-                          <span className="flex-1 text-sm truncate">
-                            {lesson.title}
-                          </span>
+                          <span className="flex-1 text-sm truncate">{lesson.title}</span>
 
                           {/* Lesson type badge */}
                           <span
@@ -254,14 +192,14 @@ export default function LessonSidebar({
                               lesson.type === "vocabulary"
                                 ? "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
                                 : lesson.type === "grammar"
-                                ? "bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400"
-                                : lesson.type === "dialogue"
-                                ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
-                                : lesson.type === "practice"
-                                ? "bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400"
-                                : lesson.type === "quiz"
-                                ? "bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400"
-                                : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400"
+                                  ? "bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400"
+                                  : lesson.type === "dialogue"
+                                    ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
+                                    : lesson.type === "practice"
+                                      ? "bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400"
+                                      : lesson.type === "quiz"
+                                        ? "bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400"
+                                        : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400"
                             }`}
                           >
                             {lesson.type.slice(0, 4)}
@@ -287,28 +225,13 @@ export default function LessonSidebar({
         className="lg:hidden fixed bottom-6 left-6 z-40 w-14 h-14 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-colors flex items-center justify-center"
         aria-label="Open course navigation"
       >
-        <svg
-          className="w-6 h-6"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M4 6h16M4 12h16M4 18h16"
-          />
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
         </svg>
       </button>
 
       {/* Mobile overlay */}
-      {isMobileOpen && (
-        <div
-          className="lg:hidden fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
-          onClick={() => setIsMobileOpen(false)}
-        />
-      )}
+      {isMobileOpen && <div className="lg:hidden fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" onClick={() => setIsMobileOpen(false)} />}
 
       {/* Sidebar - Desktop (always visible) and Mobile (slide-in) */}
       <aside
@@ -322,18 +245,8 @@ export default function LessonSidebar({
           className="lg:hidden absolute top-4 right-4 p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
           aria-label="Close navigation"
         >
-          <svg
-            className="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
 
