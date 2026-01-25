@@ -6,6 +6,7 @@ import MarkCompleteButton from "@/app/components/lessons/MarkCompleteButton";
 import LessonAudioLoader from "@/app/components/lessons/LessonAudioLoader";
 import LessonSidebar from "@/app/components/lessons/LessonSidebar";
 import LastOpenedTracker from "@/app/components/lessons/LastOpenedTracker";
+import ScrollProgressBar from "@/app/components/lessons/ScrollProgressBar";
 
 interface LessonPageProps {
   params: Promise<{
@@ -181,15 +182,8 @@ export default async function LessonPage({ params }: LessonPageProps) {
               </div>
             </div>
 
-            {/* Progress bar */}
-            <div className="h-1 bg-black/20">
-              <div
-                className="h-full bg-white/50 transition-all duration-500"
-                style={{
-                  width: `${(currentLessonIndex / sectionMeta.lessons.length) * 100}%`,
-                }}
-              />
-            </div>
+            {/* Scroll progress bar */}
+            <ScrollProgressBar />
           </header>
 
           {/* Scrollable content */}
