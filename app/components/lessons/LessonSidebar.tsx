@@ -26,7 +26,16 @@ interface CompletionState {
   [lessonId: string]: boolean;
 }
 
-export default function LessonSidebar({ sections, currentSectionId, currentLessonId, levelId, languageCode, userId, languageName, levelName }: LessonSidebarProps) {
+export default function LessonSidebar({
+  sections,
+  currentSectionId,
+  currentLessonId,
+  levelId,
+  languageCode,
+  userId,
+  languageName,
+  levelName,
+}: LessonSidebarProps) {
   const pathname = usePathname();
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set([currentSectionId]));
   const [completionState, setCompletionState] = useState<CompletionState>({});
@@ -85,9 +94,11 @@ export default function LessonSidebar({ sections, currentSectionId, currentLesso
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
-          <span>Back to Level</span>
+          <span>Back to Dashboard</span>
         </Link>
-        <h2 className="mt-3 text-lg font-bold text-gray-900 dark:text-white">{languageName} {levelName}</h2>
+        <h2 className="mt-3 text-lg font-bold text-gray-900 dark:text-white">
+          {languageName} {levelName}
+        </h2>
         <div className="mt-4 flex justify-center">
           <ProgressCircle
             userId={userId}
