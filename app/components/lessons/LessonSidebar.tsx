@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { SectionMetadata, LessonInfo } from "@/app/types/content";
 import { getLessonProgress } from "@/lib/progress";
-import ProgressCircle from "./ProgressCircle";
+import ProgressBar from "./ProgressBar";
 
 interface SectionWithMeta extends SectionMetadata {
   url: string;
@@ -24,21 +24,14 @@ interface CompletionState {
   [lessonId: string]: boolean;
 }
 
-export default function LessonSidebar({
-  sections,
-  levelId,
-  languageCode,
-  userId,
-  languageName,
-  levelName,
-}: LessonSidebarProps) {
+export default function LessonSidebar({ sections, levelId, languageCode, userId, languageName, levelName }: LessonSidebarProps) {
   const pathname = usePathname();
 
   // Derive current section and lesson from URL pathname
   // URL format: /[level]/[section]/[lesson]
-  const pathParts = pathname.split('/').filter(Boolean);
-  const currentSectionId = pathParts[1] || '';
-  const currentLessonId = pathParts[2] || '';
+  const pathParts = pathname.split("/").filter(Boolean);
+  const currentSectionId = pathParts[1] || "";
+  const currentLessonId = pathParts[2] || "";
 
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set([currentSectionId]));
   const [completionState, setCompletionState] = useState<CompletionState>({});
@@ -103,7 +96,7 @@ export default function LessonSidebar({
           {languageName} {levelName}
         </h2>
         <div className="mt-4 flex justify-center">
-          <ProgressCircle
+          <ProgressBar
             userId={userId}
             languageCode={languageCode}
             levelId={levelId}
