@@ -59,10 +59,10 @@ export default function Home() {
           <div className="text-center">
             <div className="animate-fade-in">
               <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6">
-                Learn Languages for <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Free</span>
+                Learn German for <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Free</span>
               </h1>
               <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-                No More Expensive Courses. Master German, French, Spanish & More with Our
+                No More Expensive Courses. Start Learning German with Our
                 <span className="text-primary font-semibold"> Open-Source Platform</span>
               </p>
             </div>
@@ -88,19 +88,11 @@ export default function Home() {
                 <div className="flex flex-wrap justify-center gap-6 text-sm">
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Globe size={16} className="text-blue-500" />
-                    <span className="font-medium">🇩🇪 German</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Globe size={16} className="text-blue-500" />
-                    <span className="font-medium">🇫🇷 French</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Globe size={16} className="text-blue-500" />
-                    <span className="font-medium">🇪🇸 Spanish</span>
+                    <span className="font-medium">🇩🇪 German (In Development)</span>
                   </div>
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Languages size={16} className="text-purple-500" />
-                    <span className="font-medium">More Coming Soon</span>
+                    <span className="font-medium">More Languages Coming Soon</span>
                   </div>
                 </div>
               </div>
@@ -159,7 +151,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 gap-8">
             <div className="group hover:scale-105 transition-all duration-300 p-8 rounded-2xl glass-effect hover:shadow-2xl">
               <BookOpen size={48} className="text-blue-500 mb-4 group-hover:scale-110 transition-transform" />
               <h3 className="text-xl font-bold text-foreground mb-3">Structured A1-B2 Curriculum</h3>
@@ -167,27 +159,15 @@ export default function Home() {
             </div>
 
             <div className="group hover:scale-105 transition-all duration-300 p-8 rounded-2xl glass-effect hover:shadow-2xl">
-              <Gamepad2 size={48} className="text-purple-500 mb-4 group-hover:scale-110 transition-transform" />
-              <h3 className="text-xl font-bold text-foreground mb-3">Wordle-Style Games</h3>
-              <p className="text-muted-foreground">Interactive exercises and games that make learning addictive and fun</p>
-            </div>
-
-            <div className="group hover:scale-105 transition-all duration-300 p-8 rounded-2xl glass-effect hover:shadow-2xl">
               <Mic size={48} className="text-green-500 mb-4 group-hover:scale-110 transition-transform" />
-              <h3 className="text-xl font-bold text-foreground mb-3">AI Pronunciation Help</h3>
-              <p className="text-muted-foreground">Browser-based text-to-speech for perfect pronunciation practice</p>
+              <h3 className="text-xl font-bold text-foreground mb-3">AI-Powered Practice</h3>
+              <p className="text-muted-foreground">Speaking practice, exercises, and other free tools to improve your skills</p>
             </div>
 
             <div className="group hover:scale-105 transition-all duration-300 p-8 rounded-2xl glass-effect hover:shadow-2xl">
               <Heart size={48} className="text-red-500 mb-4 group-hover:scale-110 transition-transform" />
               <h3 className="text-xl font-bold text-foreground mb-3">Completely Free</h3>
               <p className="text-muted-foreground">No ads, no subscriptions, no hidden costs. Education should be free</p>
-            </div>
-
-            <div className="group hover:scale-105 transition-all duration-300 p-8 rounded-2xl glass-effect hover:shadow-2xl">
-              <Download size={48} className="text-indigo-500 mb-4 group-hover:scale-110 transition-transform" />
-              <h3 className="text-xl font-bold text-foreground mb-3">Works Offline (PWA)</h3>
-              <p className="text-muted-foreground">Download lessons and learn anywhere, even without internet connection</p>
             </div>
 
             <div className="group hover:scale-105 transition-all duration-300 p-8 rounded-2xl glass-effect hover:shadow-2xl">
@@ -217,10 +197,10 @@ export default function Home() {
               <div className="text-center">
                 <div className="text-6xl mb-4">🇩🇪</div>
                 <h3 className="text-2xl font-bold text-foreground mb-2">German</h3>
-                <p className="text-muted-foreground mb-4">Complete A1-B2 curriculum available</p>
-                <div className="flex items-center justify-center gap-2 text-green-600">
-                  <Zap size={16} />
-                  <span className="font-medium">Available Now</span>
+                <p className="text-muted-foreground mb-4">A1 curriculum & exercises in development</p>
+                <div className="flex items-center justify-center gap-2 text-yellow-600">
+                  <Target size={16} />
+                  <span className="font-medium">In Development</span>
                 </div>
               </div>
             </LanguageLink>
@@ -232,10 +212,10 @@ export default function Home() {
               <div className="text-center">
                 <div className="text-6xl mb-4">🇫🇷</div>
                 <h3 className="text-2xl font-bold text-foreground mb-2">French</h3>
-                <p className="text-muted-foreground mb-4">A1-A2 levels coming soon</p>
-                <div className="flex items-center justify-center gap-2 text-yellow-600">
-                  <Target size={16} />
-                  <span className="font-medium">In Development</span>
+                <p className="text-muted-foreground mb-4">Planned for future release</p>
+                <div className="flex items-center justify-center gap-2 text-blue-600">
+                  <Languages size={16} />
+                  <span className="font-medium">Coming Soon</span>
                 </div>
               </div>
             </LanguageLink>
@@ -247,7 +227,7 @@ export default function Home() {
               <div className="text-center">
                 <div className="text-6xl mb-4">🇪🇸</div>
                 <h3 className="text-2xl font-bold text-foreground mb-2">Spanish</h3>
-                <p className="text-muted-foreground mb-4">Planned for Q2 2024</p>
+                <p className="text-muted-foreground mb-4">Planned for future release</p>
                 <div className="flex items-center justify-center gap-2 text-blue-600">
                   <Languages size={16} />
                   <span className="font-medium">Coming Soon</span>
@@ -303,53 +283,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Social Proof */}
-      <section className="py-20 lg:py-32 bg-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-12">Join Learners Worldwide Studying for Free</h2>
-
-          <div className="grid md:grid-cols-3 gap-8 mb-16">
-            <div className="p-8">
-              <div className="text-4xl font-bold text-green-600 mb-2">$50,000+</div>
-              <p className="text-muted-foreground">Saved in course fees by our community</p>
-            </div>
-
-            <div className="p-8">
-              <div className="text-4xl font-bold text-blue-600 mb-2 flex items-center justify-center gap-2">
-                <Star className="text-yellow-500" size={32} />
-                1,200+
-              </div>
-              <p className="text-muted-foreground">GitHub stars and growing</p>
-            </div>
-
-            <div className="p-8">
-              <div className="text-4xl font-bold text-purple-600 mb-2">15+</div>
-              <p className="text-muted-foreground">Countries represented in our community</p>
-            </div>
-          </div>
-
-          <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-2xl p-8 max-w-4xl mx-auto">
-            <h3 className="text-2xl font-bold text-foreground mb-4">"Finally, a language platform that doesn't break the bank"</h3>
-            <p className="text-lg text-muted-foreground italic">
-              "I was spending $300/month on language courses. Open Polyglot gives me the same quality education for free. The community aspect makes
-              it even better than paid alternatives."
-            </p>
-            <div className="flex items-center justify-center gap-2 mt-4 text-muted-foreground">
-              <Users size={16} />
-              <span>- Sarah, Community Member</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Final CTA */}
       <section className="py-20 lg:py-32 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 relative overflow-hidden">
         <div className="absolute inset-0 bg-black/20"></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
           <h2 className="text-4xl md:text-6xl font-bold mb-6">Start Your Language Journey Today</h2>
-          <p className="text-xl mb-8 max-w-3xl mx-auto opacity-90">
-            Join thousands of learners mastering new languages without the expensive price tag. 100% free, forever.
-          </p>
+          <p className="text-xl mb-8 max-w-3xl mx-auto opacity-90">Master any language without the expensive price tag. 100% free, forever.</p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
             <button className="bg-white text-purple-600 hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 px-8 py-4 rounded-lg text-lg font-semibold flex items-center justify-center gap-2 shadow-lg hover:shadow-xl">
@@ -377,10 +316,6 @@ export default function Home() {
               <span>No Subscriptions</span>
             </div>
             <div className="flex items-center gap-2">
-              <Download size={16} />
-              <span>Works Offline</span>
-            </div>
-            <div className="flex items-center gap-2">
               <Github size={16} />
               <span>Open Source</span>
             </div>
@@ -394,13 +329,7 @@ export default function Home() {
           <div className="grid md:grid-cols-4 gap-8">
             <div className="col-span-2">
               <div className="flex items-center gap-2 mb-4">
-                <Image
-                  src="/logo/logo-owl-no-bg.png"
-                  alt="Open Polyglot Logo"
-                  width={48}
-                  height={48}
-                  className="object-contain"
-                />
+                <Image src="/logo/logo-owl-no-bg.png" alt="Open Polyglot Logo" width={48} height={48} className="object-contain" />
                 <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Open Polyglot</h3>
               </div>
               <p className="text-muted-foreground mb-4 max-w-md">
@@ -475,7 +404,7 @@ export default function Home() {
           </div>
 
           <div className="border-t border-border mt-8 pt-8 text-center text-muted-foreground">
-            <p>&copy; 2025 Open Polyglot. Free and open-source language learning for everyone.</p>
+            <p>&copy; {new Date().getFullYear()} Open Polyglot. Free and open-source language learning for everyone.</p>
           </div>
         </div>
       </footer>
