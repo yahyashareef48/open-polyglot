@@ -74,8 +74,8 @@ If Open Polyglot has helped you or someone you know learn a language for free, c
 ## 📞 Contact & Community
 
 - **Website:** [openpolyglot.org](https://openpolyglot.org)
-- **Issues:** [GitHub Issues](https://github.com/yourusername/openpolyglot/issues)
-- **Discussions:** [GitHub Discussions](https://github.com/yourusername/openpolyglot/discussions)
+- **Issues:** [GitHub Issues](https://github.com/yahyashareef48/open-polyglot/issues)
+- **Discussions:** [GitHub Discussions](https://github.com/yahyashareef48/open-polyglot/discussions)
 
 ---
 
