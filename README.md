@@ -2,11 +2,15 @@
 
 > **Learn languages for free - No more expensive courses**
 
-A completely free, open-source language learning platform that helps you master languages from A1 to B2 level without spending thousands on expensive courses.
+A free, open-source language learning platform. Currently in development with German A1 as the first available course.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Next.js](https://img.shields.io/badge/Next.js-14-black)](https://nextjs.org/)
-[![PWA Ready](https://img.shields.io/badge/PWA-Ready-green)](https://web.dev/progressive-web-apps/)
+
+## 🚧 Current Status
+
+- **German A1**: In development
+- **More levels & languages**: Planned for future releases
 
 ## Getting Started
 
@@ -26,11 +30,9 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## 📖 Why Open Polyglot?
 
-**The Problem:** Language courses cost $200-600+ (₹15,000-50,000+), making language learning inaccessible for millions.
+**The Problem:** Language courses can cost $200-2000+, making language learning inaccessible for many.
 
-**Our Solution:** A completely free, comprehensive platform that rivals expensive courses.
-
-**Real Impact:** We've already helped learners save thousands in course fees while providing structured, engaging language education.
+**Our Solution:** A completely free, open-source platform for language learning.
 
 ## 🤝 Contributing
 
@@ -75,12 +77,6 @@ If Open Polyglot has helped you or someone you know learn a language for free, c
 - **Issues:** [GitHub Issues](https://github.com/yourusername/openpolyglot/issues)
 - **Discussions:** [GitHub Discussions](https://github.com/yourusername/openpolyglot/discussions)
 
-## 💡 Inspiration
-
-Built by a developer who spent ₹20,000+ on German courses and wanted to create a free alternative that's accessible to everyone, everywhere.
-
 ---
-
-**"Education should be free, accessible, and empowering for all."**
 
 _Made with ❤️ for language learners worldwide_
