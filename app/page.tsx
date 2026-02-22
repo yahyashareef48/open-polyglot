@@ -58,12 +58,12 @@ export default function Home() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
           <div className="text-center">
             <div className="animate-fade-in">
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6">
+              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 text-secondary">
                 Learn German for <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Free</span>
               </h1>
               <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto">
                 No More Expensive Courses. Start Learning German with Our
-                <span className="text-primary font-semibold"> Open-Source Platform</span>
+                 <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"> Open-Source Platform</span>
               </p>
             </div>
 
@@ -79,7 +79,7 @@ export default function Home() {
                 className="border border-border hover:bg-accent transition-all duration-300 px-8 py-4 rounded-lg text-lg font-medium flex items-center justify-center gap-2"
               >
                 <Github size={20} />
-                View on GitHub
+                 <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">View on GitHub</span>
               </a>
             </div>
 
@@ -143,7 +143,7 @@ export default function Home() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6 text-secondary">
               The <span className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">Free</span> Solution
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
